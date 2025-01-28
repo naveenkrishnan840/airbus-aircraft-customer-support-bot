@@ -10,18 +10,6 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.storage import InMemoryStore
 
-# WEAVIATE_URL = "https://adpnin3dschw8lat8ig.c0.asia-southeast1.gcp.weaviate.cloud"
-# WEAVIATE_API_KEY = "y3YrECfzdhJFMNXihWrDuBwevwcJt2oogvB0"
-# HF_TOKEN = "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"
-
-
-# client = weaviate.Client(
-#     url=WEAVIATE_URL, auth_client_secret=weaviate.AuthApiKey(WEAVIATE_API_KEY),
-#     additional_headers={
-#          "X-HuggingFace-Api-Key": HF_TOKEN
-#     },
-# )
-
 
 @tool
 def lookup_policy(query: str) -> str:
