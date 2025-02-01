@@ -1,50 +1,41 @@
 #library
-import warnings
-from typing import Literal, TypedDict, Annotated, Optional
-from langgraph.graph.message import AnyMessage, add_messages
-from langchain_core.runnables import Runnable, RunnableConfig
-from pydantic import BaseModel
-from langchain_google_genai import ChatGoogleGenerativeAI
 from typing import Callable
-from langchain_core.messages import ToolMessage
-from typing import Literal
+import warnings
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph
 from langgraph.prebuilt import tools_condition
 from langgraph.graph import START, END
-from langchain_core.messages.ai import AIMessage
-import shutil
-import uuid
 from fastapi import FastAPI, APIRouter, Request, HTTPException, Depends
-import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.sessions import SessionMiddleware
-from dotenv import load_dotenv
+from fastapi.responses import StreamingResponse
 from pathlib import Path
 import uuid
 import os
-os.environ["TAVILY_API_KEY"] = "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"
-warnings.filterwarnings("ignore")
-# Local file
-from src.tools.flights import *
-from src.assistant.flight_assistant import *
-from src.utilities import *
-from src.questions import *
-from src.assistant.car_rental_assistant import *
-from src.assistant.hotel_assistant import *
-from src.assistant.excursion_assistant import *
-from src.assistant.primary_assistant import primary_assistant_runnable, primary_assistant_tools
+from dotenv import load_dotenv
+from langchain.tools.tavily_search import TavilySearchResults
 from langsmith import Client
 from langchain_core.tracers.context import tracing_v2_enabled
-from src.database_conn import get_session_local
-from src.request_validate import BotRequest
+# Local file
+from backend.src.tools.flights import *
+from backend.src.assistant.flight_assistant import flight_runnable, ToFlightBookingAssistant
+from backend.src.tools.lookup_policies_retriever_tool import lookup_policy
+from backend.src.utilities import *
+# assistance file library
+from backend.src.assistant.car_rental_assistant import car_rental_runnable, ToBookCarRental
+from backend.src.assistant.hotel_assistant import book_hotel_runnable, ToHotelBookingAssistant
+from backend.src.assistant.excursion_assistant import book_excursion_runnable, ToBookExcursion
+from backend.src.assistant.primary_assistant import primary_assistant_runnable
+# tools file library
+from backend.src.tools.car_rental import search_car_rentals, book_car_rental, update_car_rental, cancel_car_rental
+from backend.src.tools.hotels import cancel_hotel, book_hotel, update_hotel, search_hotels
+from backend.src.tools.excursions import (book_excursion, update_excursion, cancel_excursion,
+                                          search_trip_recommendations)
+from backend.src.database_conn import get_session_local
+from backend.src.request_validate import BotRequest
 
-LANGCHAIN_TRACING_V2 = "true"
-LANGCHAIN_ENDPOINT = "https://api.smith.langchain.com"
-LANGCHAIN_API_KEY = "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"
-LANGCHAIN_PROJECT = "Support Bot LangGraph"
-# os.environ["TAVILY_API_KEY"] = "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"
-client = Client(api_key=LANGCHAIN_API_KEY)
+load_dotenv()
+warnings.filterwarnings("ignore")
+client = Client(api_key=os.getenv("LANGCHAIN_API_KEY"))
 
 
 def create_entry_node(assistant_name: str, new_dialog_state: str) -> Callable:
@@ -53,11 +44,14 @@ def create_entry_node(assistant_name: str, new_dialog_state: str) -> Callable:
         return {
             "messages": [
                 ToolMessage(
-                    content=f"The assistant is now the {assistant_name}. Reflect on the above conversation between the host assistant and the user."
-                    f" The user's intent is unsatisfied. Use the provided tools to assist the user. Remember, you are {assistant_name},"
-                    " and the booking, update, other other action is not complete until after you have successfully invoked the appropriate tool."
-                    " If the user changes their mind or needs help for other tasks, call the CompleteOrEscalate function to let the primary host assistant take control."
-                    " Do not mention who you are - just act as the proxy for the assistant.",
+                    content=f"The assistant is now the {assistant_name}. "
+                            f"Reflect on the above conversation between the host assistant and the user. "
+                            f"The user's intent is unsatisfied. Use the provided tools to assist the user. "
+                            f"Remember, you are {assistant_name}, and the booking, update, "
+                            f"other action is not complete until after you have successfully invoked "
+                            f"the appropriate tool. If the user changes their mind or needs help for other tasks, "
+                            f"call the CompleteOrEscalate function to let the primary host assistant take control. "
+                            f"Do not mention who you are - just act as the proxy for the assistant.",
                     tool_call_id=tool_call_id,
                 )
             ],
@@ -77,7 +71,9 @@ def user_info(state: State):
 builder.add_node("fetch_user_info", user_info)
 
 # Primary assistant
-builder.add_node("primary_assistant", Assistant(primary_assistant_runnable))
+builder.add_node("primary_assistant", Assistant(primary_assistant_runnable()))
+
+primary_assistant_tools = [TavilySearchResults(max_results=1), search_flights, lookup_policy]
 builder.add_node(
     "primary_assistant_tools", create_tool_node_with_fallback(primary_assistant_tools)
 )
@@ -89,13 +85,13 @@ builder.add_node(
     create_entry_node("Flight Updates & Booking Assistant", "update_flight"),
 )
 
-builder.add_node("update_flight", Assistant(update_flight_runnable))
-
+builder.add_node("update_flight", Assistant(flight_runnable()))
+update_flight_sensitive_tools = [cancel_ticket, update_ticket_to_new_flight]
 builder.add_node(
     "update_flight_sensitive_tools",
     create_tool_node_with_fallback(update_flight_sensitive_tools),
 )
-
+update_flight_safe_tools = [search_flights]
 builder.add_node(
     "update_flight_safe_tools",
     create_tool_node_with_fallback(update_flight_safe_tools),
@@ -105,13 +101,21 @@ builder.add_node(
 
 builder.add_node(
     "enter_book_car_rental",
-    create_entry_node("Car Rental Assistant", "book_car_rental"),
+    create_entry_node(assistant_name="Car Rental Assistant", new_dialog_state="book_car_rental"),
 )
-builder.add_node("book_car_rental", Assistant(book_car_rental_runnable))
+builder.add_node("book_car_rental", Assistant(car_rental_runnable()))
+
+book_car_rental_safe_tools = [search_car_rentals]
 builder.add_node(
     "book_car_rental_safe_tools",
     create_tool_node_with_fallback(book_car_rental_safe_tools),
 )
+book_car_rental_sensitive_tools = [
+        book_car_rental,
+        update_car_rental,
+        cancel_car_rental,
+    ]
+
 builder.add_node(
     "book_car_rental_sensitive_tools",
     create_tool_node_with_fallback(book_car_rental_sensitive_tools),
@@ -119,13 +123,18 @@ builder.add_node(
 
 # Hotel booking assistant
 builder.add_node(
-    "enter_book_hotel", create_entry_node("Hotel Booking Assistant", "book_hotel")
+    "enter_book_hotel", create_entry_node(assistant_name="Hotel Booking Assistant", new_dialog_state="book_hotel")
 )
-builder.add_node("book_hotel", Assistant(book_hotel_runnable))
+
+builder.add_node("book_hotel", Assistant(book_hotel_runnable()))
+
+book_hotel_safe_tools = [search_hotels]
 builder.add_node(
     "book_hotel_safe_tools",
     create_tool_node_with_fallback(book_hotel_safe_tools),
 )
+
+book_hotel_sensitive_tools = [book_hotel, update_hotel, cancel_hotel]
 builder.add_node(
     "book_hotel_sensitive_tools",
     create_tool_node_with_fallback(book_hotel_sensitive_tools),
@@ -134,14 +143,18 @@ builder.add_node(
 # Excursion assistant
 builder.add_node(
     "enter_book_excursion",
-    create_entry_node("Trip Recommendation Assistant", "book_excursion"),
+    create_entry_node(assistant_name="Trip Recommendation Assistant", new_dialog_state="book_excursion"),
 )
-builder.add_node("book_excursion", Assistant(book_excursion_runnable))
 
+builder.add_node("book_excursion", Assistant(book_excursion_runnable()))
+
+book_excursion_safe_tools = [search_trip_recommendations]
 builder.add_node(
     "book_excursion_safe_tools",
     create_tool_node_with_fallback(book_excursion_safe_tools),
 )
+
+book_excursion_sensitive_tools = [book_excursion, update_excursion, cancel_excursion]
 builder.add_node(
     "book_excursion_sensitive_tools",
     create_tool_node_with_fallback(book_excursion_sensitive_tools),
@@ -384,74 +397,78 @@ async def compile_langgraph(request: Request, session=Depends(get_session_local)
     return HTTPException(status_code=200, detail="success")
 
 
+async def stream_agent_response(compiled_graph, config, input_msg):
+    try:
+        _printed = set()
+        # We can reuse the tutorial questions from part 1 to see how it does.
+        with tracing_v2_enabled(project_name=os.getenv("LANGCHAIN_PROJECT"), client=client):
+            events = compiled_graph.astream(
+                {"messages": ("user", input_msg)}, config, stream_mode="values"
+            )
+            snapshot = compiled_graph.get_state(config)
+            if snapshot.next:
+                bot_response_content = {"bot_response": "", "interrupt": "yes"}
+                yield bot_response_content
+            else:
+                async for st in events:
+                    bot_response = st[-1]["messages"][-1]
+                    if bot_response.content:
+                        bot_response_content = {"bot_response": bot_response.content, "interrupt": "no"}
+                        yield bot_response_content
+
+            # for question in tutorial_questions:
+            #     events = compiled_graph.stream(
+            #         {"messages": ("user", question)}, config, stream_mode="values"
+            #     )
+            #     generation_response = [st for st in events]
+            #     for event in events:
+            #         print_event(event, _printed)
+            #     snapshot = compiled_graph.get_state(config)
+            #     while snapshot.next:
+            #         # We have an interrupt! The agent is trying to use a tool, and the user can approve or deny it
+            #         # Note: This code is all outside of your graph. Typically, you would stream the output to a UI.
+            #         # Then, you would have the frontend trigger a new run via an API call when the user has provided input.
+            #         try:
+            #             user_input = input(
+            #                 "Do you approve of the above actions? Type 'y' to continue;"
+            #                 " otherwise, explain your requested changed.\n\n"
+            #             )
+            #         except:
+            #             user_input = "y"
+            #         if user_input.strip() == "y":
+            #             # Just continue
+            #             result = compiled_graph.invoke(
+            #                 None,
+            #                 config,
+            #             )
+            #         else:
+            #             # Satisfy the tool invocation by
+            #             # providing instructions on the requested changes / change of mind
+            #             result = compiled_graph.invoke(
+            #                 {
+            #                     "messages": [
+            #                         ToolMessage(
+            #                             tool_call_id=event["messages"][-1].tool_calls[0]["id"],
+            #                             content=f"API call denied by user. Reasoning: '{user_input}'. Continue assisting, accounting for the user's input.",
+            #                         )
+            #                     ]
+            #                 },
+            #                 config,
+            #             )
+            #         snapshot = compiled_graph.get_state(config)
+    except Exception as e:
+        raise e
+
+
 @api_router.post("/bot-message-request")
 async def generate_bot_message(request: Request, bot_request: BotRequest):
     print(bot_request)
     config = request.app.state.graph_config
     compiled_graph = request.app.state.compiled_graph
     config["configurable"]["passenger_id"] = bot_request.passengerId
-    _printed = set()
-    # We can reuse the tutorial questions from part 1 to see how it does.
-    with tracing_v2_enabled(project_name=LANGCHAIN_PROJECT, client=client):
-        events = compiled_graph.astream(
-            {"messages": ("user", bot_request.input_msg)}, config, stream_mode="values"
-        )
-        generation_response = [st for st in events]
-        print(generation_response)
-        snapshot = compiled_graph.get_state(config)
-        if snapshot.next:
-            bot_response_content = {"bot_response": "", "interrupt": "yes"}
-            return HTTPException(status_code=200, detail=bot_response_content)
-        else:
-            bot_response = generation_response[-1]["messages"][-1]
-            if bot_response.content:
-                bot_response_content = {"bot_response": bot_response.content, "interrupt": "no"}
-                return HTTPException(status_code=200, detail=bot_response_content)
+    return StreamingResponse(stream_agent_response(compiled_graph, config, bot_request.input_msg),
+                             media_type="text/event-stream")
 
-        # for question in tutorial_questions:
-        #     events = compiled_graph.stream(
-        #         {"messages": ("user", question)}, config, stream_mode="values"
-        #     )
-        #     generation_response = [st for st in events]
-        #     for event in events:
-        #         print_event(event, _printed)
-        #     snapshot = compiled_graph.get_state(config)
-        #     while snapshot.next:
-        #         # We have an interrupt! The agent is trying to use a tool, and the user can approve or deny it
-        #         # Note: This code is all outside of your graph. Typically, you would stream the output to a UI.
-        #         # Then, you would have the frontend trigger a new run via an API call when the user has provided input.
-        #         try:
-        #             user_input = input(
-        #                 "Do you approve of the above actions? Type 'y' to continue;"
-        #                 " otherwise, explain your requested changed.\n\n"
-        #             )
-        #         except:
-        #             user_input = "y"
-        #         if user_input.strip() == "y":
-        #             # Just continue
-        #             result = compiled_graph.invoke(
-        #                 None,
-        #                 config,
-        #             )
-        #         else:
-        #             # Satisfy the tool invocation by
-        #             # providing instructions on the requested changes / change of mind
-        #             result = compiled_graph.invoke(
-        #                 {
-        #                     "messages": [
-        #                         ToolMessage(
-        #                             tool_call_id=event["messages"][-1].tool_calls[0]["id"],
-        #                             content=f"API call denied by user. Reasoning: '{user_input}'. Continue assisting, accounting for the user's input.",
-        #                         )
-        #                     ]
-        #                 },
-        #                 config,
-        #             )
-        #         snapshot = compiled_graph.get_state(config)
-
-# app.add_middleware(SessionMiddleware, secret_key="some-random-string")
-# @app.on_event("startup")
-# async def set_env_var():
 app.include_router(api_router)
 # local changes
 if __name__ == "__main__":

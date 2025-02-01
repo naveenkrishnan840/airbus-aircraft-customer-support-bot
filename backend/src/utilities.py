@@ -7,8 +7,7 @@ from pydantic import BaseModel
 from langchain_core.runnables import Runnable, RunnableConfig
 from langgraph.graph.message import AnyMessage, add_messages
 
-llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro",
-                             google_api_key="AIzaSyAYmSmi6qAlKEALP0FtjK60ZsjMIjZv4z4")
+llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro")
 
 
 def handle_tool_error(state) -> dict:
@@ -26,8 +25,7 @@ def handle_tool_error(state) -> dict:
 
 
 def create_tool_node_with_fallback(tools: list) -> dict:
-    return ToolNode(tools).with_fallbacks([RunnableLambda(handle_tool_error)],
-                                          exception_key="error")
+    return ToolNode(tools).with_fallbacks(fallbacks=[RunnableLambda(handle_tool_error)], exception_key="error")
 
 
 def print_event(event: dict, _printed: set, max_length=1500):

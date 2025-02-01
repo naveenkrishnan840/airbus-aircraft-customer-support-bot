@@ -22,7 +22,7 @@ def lookup_policy(query: str) -> str:
                                          allow_dangerous_deserialization=True)
     parent_splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=0)
     child_splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=0)
-    compressor = CohereRerank(cohere_api_key="nbDqU1hTVxWmXGbLYI6OnYhp4Cx40MZ5hOmO5oKX", top_n=3)
+    compressor = CohereRerank(top_n=5, user_agent="langchain")
     retriever = ParentDocumentRetriever(vectorstore=vectorstore_local, parent_splitter=parent_splitter,
                                         child_splitter=child_splitter, docstore=InMemoryStore())
     # compressor = FlashrankRerank()
