@@ -9,6 +9,7 @@ from fastapi import FastAPI, APIRouter, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pathlib import Path
+import json
 import uuid
 import os
 from dotenv import load_dotenv
@@ -32,6 +33,7 @@ from backend.src.tools.excursions import (book_excursion, update_excursion, canc
                                           search_trip_recommendations)
 from backend.src.database_conn import get_session_local
 from backend.src.request_validate import BotRequest
+
 
 load_dotenv()
 warnings.filterwarnings("ignore")
@@ -397,24 +399,28 @@ async def compile_langgraph(request: Request, session=Depends(get_session_local)
     return HTTPException(status_code=200, detail="success")
 
 
-async def stream_agent_response(compiled_graph, config, input_msg):
+async def stream_agent_response(compiled_graph, config, input_msg, interrupt_status):
     try:
         _printed = set()
         # We can reuse the tutorial questions from part 1 to see how it does.
         with tracing_v2_enabled(project_name=os.getenv("LANGCHAIN_PROJECT"), client=client):
-            events = compiled_graph.astream(
-                {"messages": ("user", input_msg)}, config, stream_mode="values"
-            )
+            events = compiled_graph.stream(input={"messages": ("user", input_msg.strip())}, config=config)
             snapshot = compiled_graph.get_state(config)
             if snapshot.next:
-                bot_response_content = {"bot_response": "", "interrupt": "yes"}
-                yield bot_response_content
+                # bot_response_content = {"bot_response": "", "interrupt": "yes"}
+                yield f"{{\n 'bot_response': '',\n 'interrupt': yes \n}}"
             else:
-                async for st in events:
-                    bot_response = st[-1]["messages"][-1]
-                    if bot_response.content:
-                        bot_response_content = {"bot_response": bot_response.content, "interrupt": "no"}
-                        yield bot_response_content
+                for st in events:
+                    try:
+                        if "primary_assistant" in st:
+                            bot_response = st["primary_assistant"]["messages"]
+                            if bot_response.content:
+                                bot_response_content = json.dumps({"bot_response": bot_response.content,
+                                                                   "interrupt": "no"})
+                                yield bot_response_content
+                                # yield f"{{\n \'bot_response\': {bot_response.content},\n \'interrupt\': \'no\' \n}}"
+                    except Exception as e:
+                        raise e
 
             # for question in tutorial_questions:
             #     events = compiled_graph.stream(
@@ -466,7 +472,8 @@ async def generate_bot_message(request: Request, bot_request: BotRequest):
     config = request.app.state.graph_config
     compiled_graph = request.app.state.compiled_graph
     config["configurable"]["passenger_id"] = bot_request.passengerId
-    return StreamingResponse(stream_agent_response(compiled_graph, config, bot_request.input_msg),
+    return StreamingResponse(stream_agent_response(compiled_graph, config, bot_request.input_msg,
+                                                   bot_request.interrupt_status),
                              media_type="text/event-stream")
 
 app.include_router(api_router)

@@ -1,7 +1,8 @@
 from backend.src.tools.flights import search_flights, update_ticket_to_new_flight, cancel_ticket
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import ChatPromptTemplate
 from datetime import datetime
-from backend.src.utilities import llm, CompleteOrEscalate
+from backend.src.utilities import CompleteOrEscalate
 from pydantic import BaseModel, Field
 
 
@@ -35,7 +36,7 @@ def flight_runnable():
             ("placeholder", "{messages}"),
         ]
     ).partial(time=datetime.now)
-
+    llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro")
     update_flight_safe_tools = [search_flights]
     update_flight_sensitive_tools = [cancel_ticket, update_ticket_to_new_flight]
     update_flight_tools = update_flight_safe_tools + update_flight_sensitive_tools

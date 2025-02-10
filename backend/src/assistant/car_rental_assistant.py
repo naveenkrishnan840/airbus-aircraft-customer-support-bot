@@ -1,8 +1,9 @@
 from backend.src.tools.car_rental import *
 from langchain.prompts import ChatPromptTemplate
+from langchain_google_genai import ChatGoogleGenerativeAI
 from datetime import datetime
-from backend.src.utilities import llm, CompleteOrEscalate
-from pydantic import BaseModel, Field
+from backend.src.utilities import CompleteOrEscalate
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class ToBookCarRental(BaseModel):
@@ -18,7 +19,7 @@ class ToBookCarRental(BaseModel):
     )
 
     class Config:
-        json_schema_extra = {
+        json_schema_extra: ConfigDict = {
             "example": {
                 "location": "Basel",
                 "start_date": "2023-07-01",
@@ -63,5 +64,6 @@ def car_rental_runnable():
         update_car_rental,
         cancel_car_rental,
     ]
+    llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro")
     book_car_rental_tools = book_car_rental_safe_tools + book_car_rental_sensitive_tools
     return book_car_rental_prompt | llm.bind_tools(book_car_rental_tools + [CompleteOrEscalate])

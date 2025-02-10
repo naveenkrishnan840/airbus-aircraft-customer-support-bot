@@ -7,8 +7,6 @@ from pydantic import BaseModel
 from langchain_core.runnables import Runnable, RunnableConfig
 from langgraph.graph.message import AnyMessage, add_messages
 
-llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro")
-
 
 def handle_tool_error(state) -> dict:
     error = state.get("error")

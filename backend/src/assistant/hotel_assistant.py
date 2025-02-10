@@ -1,7 +1,8 @@
 from backend.src.tools.hotels import *
 from langchain.prompts import ChatPromptTemplate
+from langchain_google_genai import ChatGoogleGenerativeAI
 from datetime import datetime
-from backend.src.utilities import llm, CompleteOrEscalate
+from backend.src.utilities import CompleteOrEscalate
 from pydantic import BaseModel, Field
 
 
@@ -53,7 +54,7 @@ def book_hotel_runnable():
             ("placeholder", "{messages}"),
         ]
     ).partial(time=datetime.now)
-
+    llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro")
     book_hotel_safe_tools = [search_hotels]
     book_hotel_sensitive_tools = [book_hotel, update_hotel, cancel_hotel]
     book_hotel_tools = book_hotel_safe_tools + book_hotel_sensitive_tools

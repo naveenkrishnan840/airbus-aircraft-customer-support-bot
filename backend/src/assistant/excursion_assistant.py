@@ -1,7 +1,8 @@
 from backend.src.tools.excursions import *
 from langchain.prompts import ChatPromptTemplate
+from langchain_google_genai import ChatGoogleGenerativeAI
 from datetime import datetime
-from backend.src.utilities import llm, CompleteOrEscalate
+from backend.src.utilities import CompleteOrEscalate
 from pydantic import BaseModel, Field
 
 
@@ -50,7 +51,7 @@ def book_excursion_runnable():
             ("placeholder", "{messages}"),
         ]
     ).partial(time=datetime.now)
-
+    llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro")
     book_excursion_safe_tools = [search_trip_recommendations]
     book_excursion_sensitive_tools = [book_excursion, update_excursion, cancel_excursion]
     book_excursion_tools = book_excursion_safe_tools + book_excursion_sensitive_tools

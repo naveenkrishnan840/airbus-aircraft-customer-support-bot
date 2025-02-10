@@ -3,9 +3,7 @@ import weaviate
 from langchain.retrievers.document_compressors import CohereRerank, EmbeddingsFilter
 # from langchain_cohere import CohereRerank
 from langchain.retrievers import ContextualCompressionRetriever, ParentDocumentRetriever
-from langchain.retrievers.weaviate_hybrid_search import WeaviateHybridSearchRetriever
-from langchain.tools.retriever import create_retriever_tool
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.storage import InMemoryStore
