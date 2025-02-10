@@ -3,7 +3,7 @@ import Header from "./components/Header"
 
 function App() {
   return  (<>
-  <div style={{background: "#424242", minHeight: "620px"}}>
+  <div>
     <Header/>
     <ChatBotBody/>
   </div>
