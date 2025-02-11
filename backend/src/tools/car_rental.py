@@ -1,11 +1,8 @@
 from datetime import date, datetime
 from typing import Optional, Union
-import sqlite3
-from sqlalchemy import create_engine
+from langchain_core.runnables import ensure_config
 from langchain_core.tools import tool
-
-
-db = "travel2.sqlite"
+import pandas as pd
 
 
 @tool
@@ -29,28 +26,32 @@ def search_car_rentals(
     Returns:
         list[dict]: A list of car rental dictionaries matching the search criteria.
     """
-    conn = sqlite3.connect(db)
-    cursor = conn.cursor()
+    config = ensure_config()
+    db_session = config["configurable"].get("db_session", None)
 
-    query = "SELECT * FROM car_rentals WHERE 1=1"
-    params = []
+    query = "SELECT * FROM car_rentals WHERE "
 
     if location:
-        query += " AND location LIKE ?"
-        params.append(f"%{location}%")
+        query += f" location LIKE %'{location}'%"
     if name:
-        query += " AND name LIKE ?"
-        params.append(f"%{name}%")
+        query += f" AND name LIKE %'{name}'%"
+    if price_tier:
+        query += f" AND price_tier LIKE %'{price_tier}'%"
+    if start_date:
+        query += f" AND start_date >= '{start_date}'"
+    if end_date:
+        query += f" AND end_date <= '{end_date}'"
     # For our tutorial, we will let you match on any dates and price tier.
     # (since our toy dataset doesn't have much data)
-    cursor.execute(query, params)
-    results = cursor.fetchall()
+    # cursor.execute(query, params)
+    # results = cursor.fetchall()
 
-    conn.close()
-
-    return [
-        dict(zip([column[0] for column in cursor.description], row)) for row in results
-    ]
+    # conn.close()
+    results = pd.read_sql(query, db_session).to_dict(orient="records")
+    return results
+    # return [
+    #     dict(zip([column[0] for column in cursor.description], row)) for row in results
+    # ]
 
 
 @tool
@@ -64,18 +65,17 @@ def book_car_rental(rental_id: int) -> str:
     Returns:
         str: A message indicating whether the car rental was successfully booked or not.
     """
-    conn = sqlite3.connect(db)
-    cursor = conn.cursor()
+    # conn = sqlite3.connect(db)
+    # cursor = conn.cursor()
+    config = ensure_config()
+    db_session = config["configurable"].get("db_session", None)
+    with db_session.begin() as cursor:
+        cursor.execute(f"UPDATE car_rentals SET booked = 1 WHERE id = {rental_id}")
 
-    cursor.execute("UPDATE car_rentals SET booked = 1 WHERE id = ?", (rental_id,))
-    conn.commit()
-
-    if cursor.rowcount > 0:
-        conn.close()
-        return f"Car rental {rental_id} successfully booked."
-    else:
-        conn.close()
-        return f"No car rental found with ID {rental_id}."
+        if cursor.rowcount > 0:
+            return f"Car rental {rental_id} successfully booked."
+        else:
+            return f"No car rental found with ID {rental_id}."
 
 
 @tool
@@ -95,27 +95,23 @@ def update_car_rental(
     Returns:
         str: A message indicating whether the car rental was successfully updated or not.
     """
-    conn = sqlite3.connect(db)
-    cursor = conn.cursor()
-
-    if start_date:
-        cursor.execute(
-            "UPDATE car_rentals SET start_date = ? WHERE id = ?",
-            (start_date, rental_id),
-        )
-    if end_date:
-        cursor.execute(
-            "UPDATE car_rentals SET end_date = ? WHERE id = ?", (end_date, rental_id)
-        )
-
-    conn.commit()
-
-    if cursor.rowcount > 0:
-        conn.close()
-        return f"Car rental {rental_id} successfully updated."
-    else:
-        conn.close()
-        return f"No car rental found with ID {rental_id}."
+    config = ensure_config()
+    db_session = config["configurable"].get("db_session", None)
+    # conn = sqlite3.connect(db)
+    # cursor = conn.cursor()
+    with db_session.begin() as cursor:
+        if start_date:
+            cursor.execute(
+                f"UPDATE car_rentals SET start_date = '{start_date}' WHERE id = {rental_id}",
+            )
+        if end_date:
+            cursor.execute(
+                f"UPDATE car_rentals SET end_date = '{end_date}' WHERE id = {rental_id}"
+            )
+        if cursor.rowcount > 0:
+            return f"Car rental {rental_id} successfully updated."
+        else:
+            return f"No car rental found with ID {rental_id}."
 
 
 @tool
@@ -129,17 +125,15 @@ def cancel_car_rental(rental_id: int) -> str:
     Returns:
         str: A message indicating whether the car rental was successfully cancelled or not.
     """
-    conn = sqlite3.connect(db)
-    cursor = conn.cursor()
+    # conn = sqlite3.connect(db)
+    # cursor = conn.cursor()
+    config = ensure_config()
+    db_session = config["configurable"].get("db_session", None)
 
-    cursor.execute("UPDATE car_rentals SET booked = 0 WHERE id = ?", (rental_id,))
-    conn.commit()
-
-    if cursor.rowcount > 0:
-        conn.close()
-        return f"Car rental {rental_id} successfully cancelled."
-    else:
-        conn.close()
-        return f"No car rental found with ID {rental_id}."
-
+    with db_session.begin() as cursor:
+        cursor.execute(f"UPDATE car_rentals SET booked = 0 WHERE id = {rental_id}")
+        if cursor.rowcount > 0:
+            return f"Car rental {rental_id} successfully cancelled."
+        else:
+            return f"No car rental found with ID {rental_id}."
 

@@ -43,8 +43,7 @@ const ChatBotBody = () => {
         date: new Date(),
         status: "received",
         avatar: "https://t4.ftcdn.net/jpg/02/11/61/95/360_F_211619589_fnRk5LeZohVD1hWInMAQkWzAdyVlS5ox.jpg",
-        statusTitle: "Received",
-        focus: true
+        statusTitle: "Received"
         }]);
     // const handleOpen = () => {
     //     setOpen(true);
@@ -83,7 +82,7 @@ const ChatBotBody = () => {
                 position: "left",
                 type: "text",
                 title: "Bot",
-                text: "Bot thinking, lets wait a mniute...",
+                text: "Bot thinking, lets wait a minute...",
                 avatar: "https://t4.ftcdn.net/jpg/02/11/61/95/360_F_211619589_fnRk5LeZohVD1hWInMAQkWzAdyVlS5ox.jpg",
                 className: "text-black max-h-screen font-semibold font-mono",
                 date: new Date(),
@@ -151,13 +150,15 @@ const ChatBotBody = () => {
     useEffect(() => {
         updateHeight();
     }, [messages]);
-    // useEffect(() => {
-    //     RequestService("/compile-langgraph", [])
-    //   }, []);
+
+    useEffect(() => {
+        RequestService("/compile-langgraph", [])
+      }, []);
+
     return (
         <>
-    <div className="flex flex-col mx-40 border-green-700 overflow-y-auto max-h-80 text-white">
-        <MessageList referance={heightRef}  className="h-80 overflow-y-auto overflow-hidden " dataSource={messages} />
+    <div className="flex flex-col mx-40 border-green-700 overflow-y-auto text-white" style={{height: "370px"}}>
+        <MessageList reference={heightRef} className="overflow-y-auto overflow-hidden" dataSource={messages} />
     </div>
     <Modal
         open={open}

@@ -1,11 +1,9 @@
 from langchain_core.tools import tool
 from langchain_core.runnables import RunnableConfig, ensure_config
-import sqlite3
 import pytz
 from datetime import date, datetime
 from typing import Optional
 import pandas as pd
-# db = "chat_bot_langgraph/travel2.sqlite"
 
 
 @tool
@@ -35,7 +33,7 @@ def fetch_user_flight_information(config: RunnableConfig) -> list[dict]:
         JOIN ticket_flights tf ON t.ticket_no = tf.ticket_no
         JOIN flights f ON tf.flight_id = f.flight_id
         JOIN boarding_passes bp ON bp.ticket_no = t.ticket_no AND bp.flight_id = f.flight_id
-    WHERE 
+    WHERE
         t.passenger_id = '{0}'
     """.format(passenger_id)
     # query = query.format(passenger_id)
@@ -63,26 +61,20 @@ def search_flights(
     config = ensure_config()
     db_session = config["configurable"].get("db_session", None)
 
-    query = "SELECT * FROM flights WHERE 1 = 1"
-    params = []
+    query = "SELECT * FROM flights WHERE "
 
     if departure_airport:
-        query += " AND departure_airport = '{0}'"
-        params.append(departure_airport)
+        query += f" departure_airport = '{departure_airport}'"
 
     if arrival_airport:
-        query += " AND arrival_airport = '{1}'"
-        params.append(arrival_airport)
+        query += f" AND arrival_airport = '{arrival_airport}'"
 
     if start_time:
-        query += " AND scheduled_departure >= '{2}'"
-        params.append(start_time)
+        query += f" AND scheduled_departure >= '{start_time}'"
 
     if end_time:
-        query += " AND scheduled_departure <= '{3}'"
-        params.append(end_time)
-    query += " LIMIT ?"
-    params.append(limit)
+        query += f" AND scheduled_departure <= '{end_time}'"
+    query += f" LIMIT {limit}"
     results = pd.read_sql(query, db_session).to_dict(orient="records")
     # cursor.execute(query, params)
     # rows = cursor.fetchall()
@@ -113,8 +105,8 @@ def update_ticket_to_new_flight(
     #     "SELECT departure_airport, arrival_airport, scheduled_departure FROM flights WHERE flight_id = ?",
     #     (new_flight_id,),
     # )
-    new_flight = pd.read_sql(sql="SELECT departure_airport, arrival_airport, scheduled_departure FROM flights WHERE "
-                                 "flight_id = '{0}'".format(new_flight_id), con=db_session)
+    new_flight = pd.read_sql(sql=f"SELECT departure_airport, arrival_airport, scheduled_departure FROM flights WHERE "
+                                 f"flight_id = {new_flight_id}", con=db_session)
     # new_flight = cursor.fetchone()
     if new_flight.empty:
         # cursor.close()
@@ -135,7 +127,7 @@ def update_ticket_to_new_flight(
     # cursor.execute(
     #     "SELECT flight_id FROM ticket_flights WHERE ticket_no = ?", (ticket_no,)
     # )
-    current_flight = pd.read_sql(sql="SELECT flight_id FROM ticket_flights WHERE ticket_no = '{0}'".format(ticket_no),
+    current_flight = pd.read_sql(sql=f"SELECT flight_id FROM ticket_flights WHERE ticket_no = '{ticket_no}'",
                                  con=db_session)
     # current_flight = cursor.fetchone()
     if current_flight.empty:
@@ -148,9 +140,8 @@ def update_ticket_to_new_flight(
     #     "SELECT * FROM tickets WHERE ticket_no = ? AND passenger_id = ?",
     #     (ticket_no, passenger_id),
     # )
-    current_ticket = pd.read_sql(sql="SELECT * FROM tickets WHERE ticket_no = '{0}' AND passenger_id = '{1}'"
-                                 .format(ticket_no, passenger_id),
-                                 con=db_session)
+    current_ticket = pd.read_sql(f"SELECT * FROM tickets WHERE ticket_no = '{ticket_no}' "
+                                 f"AND passenger_id = '{passenger_id}'", db_session)
     # current_ticket = cursor.fetchone()
     if current_ticket.empty:
         # cursor.close()
@@ -166,8 +157,11 @@ def update_ticket_to_new_flight(
     #     "UPDATE ticket_flights SET flight_id = ? WHERE ticket_no = ?",
     #     (new_flight_id, ticket_no),
     # )
-    pd.read_sql(sql="UPDATE ticket_flights SET flight_id = '{0}' WHERE ticket_no = '{1}'".
-                format(new_flight_id, ticket_no), con=db_session)
+    with db_session.begin() as conn:
+        conn.execute(f"UPDATE ticket_flights SET flight_id = {new_flight_id} WHERE ticket_no = '{ticket_no}'")
+
+    # pd.read_sql(sql="UPDATE ticket_flights SET flight_id = '{0}' WHERE ticket_no = '{1}'".
+    #             format(new_flight_id, ticket_no), con=db_session)
     # conn.commit()
 
     # cursor.close()
@@ -189,7 +183,7 @@ def cancel_ticket(ticket_no: str, *, config: RunnableConfig) -> str:
     # cursor.execute(
     #     "SELECT flight_id FROM ticket_flights WHERE ticket_no = ?", (ticket_no,)
     # )
-    existing_ticket = pd.read_sql("SELECT flight_id FROM ticket_flights WHERE ticket_no = '{}'".format(ticket_no),
+    existing_ticket = pd.read_sql(f"SELECT flight_id FROM ticket_flights WHERE ticket_no = '{ticket_no}'",
                                   db_session)
     # existing_ticket = cursor.fetchone()
     if existing_ticket.empty:
@@ -202,8 +196,8 @@ def cancel_ticket(ticket_no: str, *, config: RunnableConfig) -> str:
     #     "SELECT flight_id FROM tickets WHERE ticket_no = ? AND passenger_id = ?",
     #     (ticket_no, passenger_id),
     # )
-    current_ticket = pd.read_sql("SELECT flight_id FROM tickets WHERE ticket_no = '{0}' AND passenger_id = '{1}'".
-                                 format(ticket_no, passenger_id), db_session)
+    current_ticket = pd.read_sql(sql=f"SELECT flight_id FROM tickets WHERE ticket_no = '{ticket_no}' "
+                                     f"AND passenger_id = '{passenger_id}'", con=db_session)
     # current_ticket = cursor.fetchone()
     if current_ticket.empty:
         # cursor.close()
@@ -211,7 +205,7 @@ def cancel_ticket(ticket_no: str, *, config: RunnableConfig) -> str:
         return f"Current signed-in passenger with ID {passenger_id} not the owner of ticket {ticket_no}"
 
     # cursor.execute("DELETE FROM ticket_flights WHERE ticket_no = ?", (ticket_no,))
-    pd.read_sql("DELETE FROM ticket_flights WHERE ticket_no = '{0}'".format(ticket_no), db_session)
+    pd.read_sql(f"DELETE FROM ticket_flights WHERE ticket_no = '{ticket_no}'", db_session)
     # conn.commit()
 
     # cursor.close()

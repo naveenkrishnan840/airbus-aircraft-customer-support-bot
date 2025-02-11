@@ -1,10 +1,8 @@
 from datetime import date, datetime
 from typing import Optional, Union
-import sqlite3
+import pandas as pd
 from langchain_core.tools import tool
-
-
-db = "travel2.sqlite"
+from langchain_core.runnables import ensure_config
 
 
 @tool
@@ -28,27 +26,28 @@ def search_hotels(
     Returns:
         list[dict]: A list of hotel dictionaries matching the search criteria.
     """
-    conn = sqlite3.connect(db)
-    cursor = conn.cursor()
-
-    query = "SELECT * FROM hotels WHERE 1=1"
+    # conn = sqlite3.connect(db)
+    # cursor = conn.cursor()
+    config = ensure_config()
+    db_session = config["configurable"].get("db_session", None)
+    query = "SELECT * FROM hotels WHERE "
     params = []
 
     if location:
-        query += " AND location LIKE ?"
-        params.append(f"%{location}%")
+        query += f" location LIKE %'{location}'%"
     if name:
-        query += " AND name LIKE ?"
-        params.append(f"%{name}%")
+        query += f" AND name LIKE %'{name}'%"
     # For the sake of this tutorial, we will let you match on any dates and price tier.
-    cursor.execute(query, params)
-    results = cursor.fetchall()
+    results = pd.read_sql(query, db_session).to_dict(orient="records")
+    return results
+    # cursor.execute(query, params)
+    # results = cursor.fetchall()
 
-    conn.close()
+    # conn.close()
 
-    return [
-        dict(zip([column[0] for column in cursor.description], row)) for row in results
-    ]
+    # return [
+    #     dict(zip([column[0] for column in cursor.description], row)) for row in results
+    # ]
 
 
 @tool
@@ -62,18 +61,16 @@ def book_hotel(hotel_id: int) -> str:
     Returns:
         str: A message indicating whether the hotel was successfully booked or not.
     """
-    conn = sqlite3.connect(db)
-    cursor = conn.cursor()
-
-    cursor.execute("UPDATE hotels SET booked = 1 WHERE id = ?", (hotel_id,))
-    conn.commit()
-
-    if cursor.rowcount > 0:
-        conn.close()
-        return f"Hotel {hotel_id} successfully booked."
-    else:
-        conn.close()
-        return f"No hotel found with ID {hotel_id}."
+    config = ensure_config()
+    db_session = config["configurable"].get("db_session", None)
+    # conn = sqlite3.connect(db)
+    # cursor = conn.cursor()
+    with db_session.begin() as cursor:
+        cursor.execute(f"UPDATE hotels SET booked = 1 WHERE id = {hotel_id}",)
+        if cursor.rowcount > 0:
+            return f"Hotel {hotel_id} successfully booked."
+        else:
+            return f"No hotel found with ID {hotel_id}."
 
 
 @tool
@@ -93,26 +90,24 @@ def update_hotel(
     Returns:
         str: A message indicating whether the hotel was successfully updated or not.
     """
-    conn = sqlite3.connect(db)
-    cursor = conn.cursor()
+    # conn = sqlite3.connect(db)
+    # cursor = conn.cursor()
+    config = ensure_config()
+    db_session = config["configurable"].get("db_session", None)
 
-    if checkin_date:
-        cursor.execute(
-            "UPDATE hotels SET checkin_date = ? WHERE id = ?", (checkin_date, hotel_id)
-        )
-    if checkout_date:
-        cursor.execute(
-            "UPDATE hotels SET checkout_date = ? WHERE id = ?",
-            (checkout_date, hotel_id),
-        )
-
-    conn.commit()
+    with db_session.begin() as cursor:
+        if checkin_date:
+            cursor.execute(
+                f"UPDATE hotels SET checkin_date = '{checkin_date}' WHERE id = {hotel_id}"
+            )
+        if checkout_date:
+            cursor.execute(
+                f"UPDATE hotels SET checkout_date = '{checkout_date}' WHERE id = {hotel_id}",
+            )
 
     if cursor.rowcount > 0:
-        conn.close()
         return f"Hotel {hotel_id} successfully updated."
     else:
-        conn.close()
         return f"No hotel found with ID {hotel_id}."
 
 
@@ -127,17 +122,15 @@ def cancel_hotel(hotel_id: int) -> str:
     Returns:
         str: A message indicating whether the hotel was successfully cancelled or not.
     """
-    conn = sqlite3.connect(db)
-    cursor = conn.cursor()
+    # conn = sqlite3.connect(db)
+    # cursor = conn.cursor()
+    config = ensure_config()
+    db_session = config["configurable"].get("db_session", None)
 
-    cursor.execute("UPDATE hotels SET booked = 0 WHERE id = ?", (hotel_id,))
-    conn.commit()
-
-    if cursor.rowcount > 0:
-        conn.close()
-        return f"Hotel {hotel_id} successfully cancelled."
-    else:
-        conn.close()
-        return f"No hotel found with ID {hotel_id}."
-
+    with db_session.begin() as cursor:
+        cursor.execute(f"UPDATE hotels SET booked = 0 WHERE id = {hotel_id}")
+        if cursor.rowcount > 0:
+            return f"Hotel {hotel_id} successfully cancelled."
+        else:
+            return f"No hotel found with ID {hotel_id}."
 

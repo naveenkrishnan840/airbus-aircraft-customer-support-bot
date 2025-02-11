@@ -1,10 +1,7 @@
 import pandas as pd
 from langchain_core.tools import tool
 from typing import Union, Optional
-import sqlite3
 from langchain_core.runnables.config import ensure_config
-
-db = "travel2.sqlite"
 
 
 @tool
@@ -30,27 +27,25 @@ def search_trip_recommendations(
     # conn = sqlite3.connect(db)
     # cursor = conn.cursor()
 
-    query = "SELECT * FROM trip_recommendations WHERE 1=1"
+    query = "SELECT * FROM trip_recommendations WHERE "
     params = []
 
     if location:
-        query += " AND location LIKE ?"
-        params.append(f"%{location}%")
+        query += f" location LIKE %'{location}'%"
     if name:
-        query += " AND name LIKE ?"
-        params.append(f"%{name}%")
+        query += f" AND name LIKE %'{name}'%"
     if keywords:
         keyword_list = keywords.split(",")
-        keyword_conditions = " OR ".join(["keywords LIKE ?" for _ in keyword_list])
+        keyword_conditions = " OR ".join([f"keywords LIKE %'{keyword.strip()}'%" for keyword in keyword_list])
         query += f" AND ({keyword_conditions})"
-        params.extend([f"%{keyword.strip()}%" for keyword in keyword_list])
+        # params.extend([f"%{keyword.strip()}%" for keyword in keyword_list])
 
-    results = pd.read_sql(sql=query, con=db_session)
+    results = pd.read_sql(sql=query, con=db_session).to_dict(orient="records")
     # cursor.execute(query, params)
     # results = cursor.fetchall()
     #
     # conn.close()
-    return results.to_dict(orient="records")
+    return results
     # return [
     #     dict(zip([column[0] for column in cursor.description], row)) for row in results
     # ]
@@ -72,18 +67,17 @@ def book_excursion(recommendation_id: int) -> str:
     # conn = sqlite3.connect(db)
     # cursor = conn.cursor()
 
-    # cursor.execute(
-    #     "UPDATE trip_recommendations SET booked = 1 WHERE id = ?", (recommendation_id,)
-    # )
-    pd.read_sql(sql="UPDATE trip_recommendations SET booked = 1 WHERE id = '{0}'".format(recommendation_id))
+    with db_session.begin() as cursor:
+        cursor.execute(f"UPDATE trip_recommendations SET booked = 1 WHERE id = {recommendation_id}")
+    # pd.read_sql(sql="UPDATE trip_recommendations SET booked = 1 WHERE id = '{0}'".format(recommendation_id))
     # conn.commit()
 
-    # if cursor.rowcount > 0:
-    #     conn.close()
-    return f"Trip recommendation {recommendation_id} successfully booked."
-    # else:
-    #     conn.close()
-    #     return f"No trip recommendation found with ID {recommendation_id}."
+        if cursor.rowcount > 0:
+            # conn.close()
+            return f"Trip recommendation {recommendation_id} successfully booked."
+        else:
+            # conn.close()
+            return f"No trip recommendation found with ID {recommendation_id}."
 
 
 @tool
@@ -103,20 +97,17 @@ def update_excursion(recommendation_id: int, details: str) -> str:
     # conn = sqlite3.connect(db)
     # cursor = conn.cursor()
 
-    # cursor.execute(
-    #     "UPDATE trip_recommendations SET details = ? WHERE id = ?",
-    #     (details, recommendation_id),
-    # )
-    pd.read_sql(sql="UPDATE trip_recommendations SET details = '{0}' WHERE id = '{1}'".
-                format(details, recommendation_id))
+    # pd.read_sql(sql="UPDATE trip_recommendations SET details = '{0}' WHERE id = '{1}'".
+    #             format(details, recommendation_id))
     # conn.commit()
-
-    # if cursor.rowcount > 0:
-        # conn.close()
-    return f"Trip recommendation {recommendation_id} successfully updated."
-    # else:
-    #     # conn.close()
-    #     return f"No trip recommendation found with ID {recommendation_id}."
+    with db_session.begin() as cursor:
+        cursor.execute(f"UPDATE trip_recommendations SET details = '{details}' WHERE id = {recommendation_id}")
+        if cursor.rowcount > 0:
+            # conn.close()
+            return f"Trip recommendation {recommendation_id} successfully updated."
+        else:
+            # conn.close()
+            return f"No trip recommendation found with ID {recommendation_id}."
 
 
 @tool
@@ -135,19 +126,13 @@ def cancel_excursion(recommendation_id: int) -> str:
     # conn = sqlite3.connect(db)
     # cursor = conn.cursor()
 
-    # cursor.execute(
-    #     "UPDATE trip_recommendations SET booked = 0 WHERE id = ?", (recommendation_id,)
-    # )
-    pd.read_sql(sql="UPDATE trip_recommendations SET booked = 0 WHERE id = '{0}'".format(recommendation_id),
-                con=db_session)
+    # pd.read_sql(sql="UPDATE trip_recommendations SET booked = 0 WHERE id = '{0}'".format(recommendation_id),
+    #             con=db_session)
     # conn.commit()
-
-    # if cursor.rowcount > 0:
-    #     conn.close()
-    return f"Trip recommendation {recommendation_id} successfully cancelled."
-    # else:
-    #     conn.close()
-    #     return f"No trip recommendation found with ID {recommendation_id}."
-
-
+    with db_session.begin() as cursor:
+        cursor.execute(f"UPDATE trip_recommendations SET booked = 0 WHERE id = {recommendation_id}")
+        if cursor.rowcount > 0:
+            return f"Trip recommendation {recommendation_id} successfully cancelled."
+        else:
+            return f"No trip recommendation found with ID {recommendation_id}."
 
