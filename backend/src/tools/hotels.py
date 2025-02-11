@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from typing import Optional, Union
 import pandas as pd
+from sqlalchemy import text
 from langchain_core.tools import tool
 from langchain_core.runnables import ensure_config
 
@@ -66,7 +67,7 @@ def book_hotel(hotel_id: int) -> str:
     # conn = sqlite3.connect(db)
     # cursor = conn.cursor()
     with db_session.begin() as cursor:
-        cursor.execute(f"UPDATE hotels SET booked = 1 WHERE id = {hotel_id}",)
+        cursor.execute(text(f"UPDATE hotels SET booked = 1 WHERE id = {hotel_id}"))
         if cursor.rowcount > 0:
             return f"Hotel {hotel_id} successfully booked."
         else:
@@ -98,11 +99,11 @@ def update_hotel(
     with db_session.begin() as cursor:
         if checkin_date:
             cursor.execute(
-                f"UPDATE hotels SET checkin_date = '{checkin_date}' WHERE id = {hotel_id}"
+                text(f"UPDATE hotels SET checkin_date = {checkin_date} WHERE id = {hotel_id}")
             )
         if checkout_date:
             cursor.execute(
-                f"UPDATE hotels SET checkout_date = '{checkout_date}' WHERE id = {hotel_id}",
+                text(f"UPDATE hotels SET checkout_date = {checkout_date} WHERE id = {hotel_id}")
             )
 
     if cursor.rowcount > 0:
@@ -128,7 +129,7 @@ def cancel_hotel(hotel_id: int) -> str:
     db_session = config["configurable"].get("db_session", None)
 
     with db_session.begin() as cursor:
-        cursor.execute(f"UPDATE hotels SET booked = 0 WHERE id = {hotel_id}")
+        cursor.execute(text(f"UPDATE hotels SET booked = 0 WHERE id = {hotel_id}"))
         if cursor.rowcount > 0:
             return f"Hotel {hotel_id} successfully cancelled."
         else:

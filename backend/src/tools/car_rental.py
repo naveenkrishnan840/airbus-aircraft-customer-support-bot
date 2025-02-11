@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from typing import Optional, Union
+from sqlalchemy import text
 from langchain_core.runnables import ensure_config
 from langchain_core.tools import tool
 import pandas as pd
@@ -70,7 +71,7 @@ def book_car_rental(rental_id: int) -> str:
     config = ensure_config()
     db_session = config["configurable"].get("db_session", None)
     with db_session.begin() as cursor:
-        cursor.execute(f"UPDATE car_rentals SET booked = 1 WHERE id = {rental_id}")
+        cursor.execute(text(f"UPDATE car_rentals SET booked = 1 WHERE id = {rental_id}"))
 
         if cursor.rowcount > 0:
             return f"Car rental {rental_id} successfully booked."
@@ -102,11 +103,11 @@ def update_car_rental(
     with db_session.begin() as cursor:
         if start_date:
             cursor.execute(
-                f"UPDATE car_rentals SET start_date = '{start_date}' WHERE id = {rental_id}",
+                text(f"UPDATE car_rentals SET start_date = {start_date} WHERE id = {rental_id}"),
             )
         if end_date:
             cursor.execute(
-                f"UPDATE car_rentals SET end_date = '{end_date}' WHERE id = {rental_id}"
+                text(f"UPDATE car_rentals SET end_date = {end_date} WHERE id = {rental_id}")
             )
         if cursor.rowcount > 0:
             return f"Car rental {rental_id} successfully updated."
@@ -131,7 +132,7 @@ def cancel_car_rental(rental_id: int) -> str:
     db_session = config["configurable"].get("db_session", None)
 
     with db_session.begin() as cursor:
-        cursor.execute(f"UPDATE car_rentals SET booked = 0 WHERE id = {rental_id}")
+        cursor.execute(text(f"UPDATE car_rentals SET booked = 0 WHERE id = {rental_id}"))
         if cursor.rowcount > 0:
             return f"Car rental {rental_id} successfully cancelled."
         else:

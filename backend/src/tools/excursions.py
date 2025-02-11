@@ -1,6 +1,7 @@
 import pandas as pd
 from langchain_core.tools import tool
 from typing import Union, Optional
+from sqlalchemy import text
 from langchain_core.runnables.config import ensure_config
 
 
@@ -68,7 +69,7 @@ def book_excursion(recommendation_id: int) -> str:
     # cursor = conn.cursor()
 
     with db_session.begin() as cursor:
-        cursor.execute(f"UPDATE trip_recommendations SET booked = 1 WHERE id = {recommendation_id}")
+        cursor.execute(text(f"UPDATE trip_recommendations SET booked = 1 WHERE id = {recommendation_id}"))
     # pd.read_sql(sql="UPDATE trip_recommendations SET booked = 1 WHERE id = '{0}'".format(recommendation_id))
     # conn.commit()
 
@@ -101,7 +102,7 @@ def update_excursion(recommendation_id: int, details: str) -> str:
     #             format(details, recommendation_id))
     # conn.commit()
     with db_session.begin() as cursor:
-        cursor.execute(f"UPDATE trip_recommendations SET details = '{details}' WHERE id = {recommendation_id}")
+        cursor.execute(text(f"UPDATE trip_recommendations SET details = {details} WHERE id = {recommendation_id}"))
         if cursor.rowcount > 0:
             # conn.close()
             return f"Trip recommendation {recommendation_id} successfully updated."
@@ -130,7 +131,7 @@ def cancel_excursion(recommendation_id: int) -> str:
     #             con=db_session)
     # conn.commit()
     with db_session.begin() as cursor:
-        cursor.execute(f"UPDATE trip_recommendations SET booked = 0 WHERE id = {recommendation_id}")
+        cursor.execute(text(f"UPDATE trip_recommendations SET booked = 0 WHERE id = {recommendation_id}"))
         if cursor.rowcount > 0:
             return f"Trip recommendation {recommendation_id} successfully cancelled."
         else:

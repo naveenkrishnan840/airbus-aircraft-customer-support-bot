@@ -1,6 +1,7 @@
 from langchain_core.tools import tool
 from langchain_core.runnables import RunnableConfig, ensure_config
 import pytz
+from sqlalchemy import text
 from datetime import date, datetime
 from typing import Optional
 import pandas as pd
@@ -158,7 +159,7 @@ def update_ticket_to_new_flight(
     #     (new_flight_id, ticket_no),
     # )
     with db_session.begin() as conn:
-        conn.execute(f"UPDATE ticket_flights SET flight_id = {new_flight_id} WHERE ticket_no = '{ticket_no}'")
+        conn.execute(text(f"UPDATE ticket_flights SET flight_id = {new_flight_id} WHERE ticket_no = {ticket_no}"))
 
     # pd.read_sql(sql="UPDATE ticket_flights SET flight_id = '{0}' WHERE ticket_no = '{1}'".
     #             format(new_flight_id, ticket_no), con=db_session)
@@ -203,9 +204,9 @@ def cancel_ticket(ticket_no: str, *, config: RunnableConfig) -> str:
         # cursor.close()
         # conn.close()
         return f"Current signed-in passenger with ID {passenger_id} not the owner of ticket {ticket_no}"
-
-    # cursor.execute("DELETE FROM ticket_flights WHERE ticket_no = ?", (ticket_no,))
-    pd.read_sql(f"DELETE FROM ticket_flights WHERE ticket_no = '{ticket_no}'", db_session)
+    with db_session.begin() as cursor:
+        cursor.execute(text(f"DELETE FROM ticket_flights WHERE ticket_no = {ticket_no}"))
+    # pd.read_sql(f"DELETE FROM ticket_flights WHERE ticket_no = '{ticket_no}'", db_session)
     # conn.commit()
 
     # cursor.close()

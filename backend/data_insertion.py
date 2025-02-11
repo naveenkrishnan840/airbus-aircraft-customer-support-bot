@@ -1,7 +1,7 @@
 import requests
 import sqlite3
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
 db_url = "https://storage.googleapis.com/benchmarks-artifacts/travel-db/travel2.sqlite"
 local_file = "travel2.sqlite"
@@ -48,31 +48,9 @@ for column in datetime_columns:
 tdf["aircrafts_data"] = tdf["aircrafts_data"][tdf["aircrafts_data"]["model"] == "Airbus A319-100"]
 tdf["aircrafts_data"].reset_index(drop=True, inplace=True)
 
-tdf["airports_data"] = tdf["airports_data"][tdf["airports_data"]["airport_code"].isin(['BKK',
-'DEN',
-'SHA',
-'SFO',
-'AKL',
-'BOS',
-'CAN',
-'DME',
-'SEZ',
-'DUS',
-'SYD',
-'LIS',
-'PNH',
-'DAC',
-'OSL',
-'AMS',
-'LHR',
-'HAM',
-'BSL',
-'ARN',
-'ATH',
-'DUB',
-'GVA',
-'MSP',
-'PRG'])]
+tdf["airports_data"] = tdf["airports_data"][tdf["airports_data"]["airport_code"].isin(
+    ['BKK', 'DEN', 'SHA', 'SFO', 'AKL','BOS', 'CAN', 'DME', 'SEZ', 'DUS', 'SYD', 'LIS', 'PNH', 'DAC', 'OSL', 'AMS',
+     'LHR', 'HAM', 'BSL', 'ARN', 'ATH', 'DUB', 'GVA', 'MSP', 'PRG'])]
 
 tdf["airports_data"].reset_index(drop=True, inplace=True)
 
@@ -96,7 +74,9 @@ tdf["seats"] = tdf["seats"][tdf["seats"]["aircraft_code"] == "319"]
 tdf["seats"].reset_index(drop=True, inplace=True)
 
 
-SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://debian_sys_maint:PL17UchUtriTr0bas#ic8TRoxl8@dhee-platform.ccxstins9jm3.ap-southeast-1.rds.amazonaws.com/travel_support"
+SQLALCHEMY_DATABASE_URL = (f"mysql+pymysql://debian_sys_maint:PL17UchUtriTr0bas#ic8TRoxl8@dhee-platform."
+                           f"ccxstins9jm3.ap-southeast-1.rds.amazonaws.com/travel_support")
+
 print(SQLALCHEMY_DATABASE_URL)
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
@@ -105,7 +85,8 @@ engine = create_engine(
 
 with engine.begin() as cursor:
     for table in tables:
-        cursor.execute(f"truncate table {table}")
+        cursor.execute(text(f"truncate table {table}"))
 
 for table_name, df in tdf.items():
     df.to_sql(table_name, engine, if_exists="replace", index=False)
+
