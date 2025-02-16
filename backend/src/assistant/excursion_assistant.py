@@ -51,7 +51,7 @@ def book_excursion_runnable():
             ("placeholder", "{messages}"),
         ]
     ).partial(time=datetime.now)
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro")
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-lite-preview-02-05")
     book_excursion_safe_tools = [search_trip_recommendations]
     book_excursion_sensitive_tools = [book_excursion, update_excursion, cancel_excursion]
     book_excursion_tools = book_excursion_safe_tools + book_excursion_sensitive_tools

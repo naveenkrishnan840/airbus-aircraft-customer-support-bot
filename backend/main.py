@@ -1,6 +1,8 @@
 #library
 from typing import Callable
 import warnings
+
+import pandas as pd
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph
 from langgraph.prebuilt import tools_condition
@@ -34,7 +36,6 @@ from backend.src.tools.excursions import (book_excursion, update_excursion, canc
 from backend.src.database_conn import get_session_local
 from backend.src.request_validate import BotRequest
 
-
 load_dotenv()
 warnings.filterwarnings("ignore")
 client = Client(api_key=os.getenv("LANGCHAIN_API_KEY"))
@@ -55,6 +56,7 @@ def create_entry_node(assistant_name: str, new_dialog_state: str) -> Callable:
                             f"call the CompleteOrEscalate function to let the primary host assistant take control. "
                             f"Do not mention who you are - just act as the proxy for the assistant.",
                     tool_call_id=tool_call_id,
+                    name=assistant_name
                 )
             ],
             "dialog_state": new_dialog_state,
@@ -79,7 +81,6 @@ primary_assistant_tools = [TavilySearchResults(max_results=1), search_flights, l
 builder.add_node(
     "primary_assistant_tools", create_tool_node_with_fallback(primary_assistant_tools)
 )
-
 
 # Flight booking assistant
 builder.add_node(
@@ -113,10 +114,10 @@ builder.add_node(
     create_tool_node_with_fallback(book_car_rental_safe_tools),
 )
 book_car_rental_sensitive_tools = [
-        book_car_rental,
-        update_car_rental,
-        cancel_car_rental,
-    ]
+    book_car_rental,
+    update_car_rental,
+    cancel_car_rental,
+]
 
 builder.add_node(
     "book_car_rental_sensitive_tools",
@@ -169,7 +170,7 @@ builder.add_edge(START, "fetch_user_info")
 # Each delegated workflow can directly respond to the user
 # When the user responds, we want to return to the currently active workflow
 def route_to_workflow(
-    state: State,
+        state: State,
 ) -> Literal[
     "primary_assistant",
     "update_flight",
@@ -192,7 +193,7 @@ builder.add_conditional_edges(source="fetch_user_info", path=route_to_workflow,
 
 # Primary Assistant Routers
 def route_primary_assistant(
-    state: State,
+        state: State,
 ):
     route = tools_condition(state)
     if route == END:
@@ -226,7 +227,7 @@ builder.add_edge("enter_update_flight", "update_flight")
 
 
 def route_update_flight(
-    state: State,
+        state: State,
 ):
     route = tools_condition(state)
     if route == END:
@@ -253,7 +254,7 @@ builder.add_edge("enter_book_car_rental", "book_car_rental")
 
 
 def route_book_car_rental(
-    state: State,
+        state: State,
 ):
     route = tools_condition(state)
     if route == END:
@@ -279,7 +280,7 @@ builder.add_edge("enter_book_hotel", "book_hotel")
 
 
 def route_book_hotel(
-    state: State,
+        state: State,
 ):
     route = tools_condition(state)
     if route == END:
@@ -305,7 +306,7 @@ builder.add_edge("enter_book_excursion", "book_excursion")
 
 
 def route_book_excursion(
-    state: State,
+        state: State,
 ):
     route = tools_condition(state)
     if route == END:
@@ -343,6 +344,7 @@ def pop_dialog_state(state: State) -> dict:
             ToolMessage(
                 content="Resuming dialog with the host assistant. Please reflect on the past conversation and assist the user as needed.",
                 tool_call_id=state["messages"][-1].tool_calls[0]["id"],
+                nmae=state["messages"][-1].tool_calls[0]["name"]
             )
         )
     return {
@@ -356,7 +358,7 @@ builder.add_node("leave_skill", pop_dialog_state)
 app = FastAPI(title="Customer Support Chat Bot Application")
 
 app.add_middleware(
-        CORSMiddleware,
+    CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
@@ -367,6 +369,25 @@ if os.path.exists(env_path):
     load_dotenv(env_path)
 
 api_router = APIRouter()
+
+
+@api_router.post("/get-passenger-id")
+async def get_passenger(request: Request, db_session=Depends(get_session_local)):
+    try:
+        query = """
+        SELECT 
+            t.passenger_id
+        FROM 
+            tickets t
+            JOIN ticket_flights tf ON t.ticket_no = tf.ticket_no
+            JOIN flights f ON tf.flight_id = f.flight_id
+            JOIN boarding_passes bp ON bp.ticket_no = t.ticket_no AND bp.flight_id = f.flight_id
+        ORDER BY RAND() LIMIT 10
+        """
+        result = pd.read_sql(query, db_session)["passenger_id"].to_list()
+        return HTTPException(status_code=200, detail=result)
+    except Exception as e:
+        raise e
 
 
 @api_router.post("/compile-langgraph")
@@ -399,26 +420,55 @@ async def compile_langgraph(request: Request, session=Depends(get_session_local)
     return HTTPException(status_code=200, detail="success")
 
 
-async def stream_agent_response(compiled_graph, config, input_msg, interrupt_status):
+async def stream_agent_response(request, compiled_graph, config, input_msg, interrupt_status, interrupt_user_input):
     try:
         _printed = set()
         # We can reuse the tutorial questions from part 1 to see how it does.
-        with tracing_v2_enabled(project_name=os.getenv("LANGCHAIN_PROJECT"), client=client):
-            events = compiled_graph.stream(input={"messages": ("user", input_msg.strip())}, config=config)
+        with (tracing_v2_enabled(project_name=os.getenv("LANGCHAIN_PROJECT"), client=client)):
             snapshot = compiled_graph.get_state(config)
-            if snapshot.next:
-                # bot_response_content = {"bot_response": "", "interrupt": "yes"}
-                yield f"{{\n 'bot_response': '',\n 'interrupt': yes \n}}"
+            # if interrupt_status is None and snapshot.next:
+            #     bot_response_content = json.dumps({"bot_response": "", "interrupt": "yes"})
+            #     yield bot_response_content
+            # else:
+            if snapshot.next and interrupt_status == "yes":
+                result = compiled_graph.invoke(None, config)
+                bot_response_content = json.dumps({"bot_response": result["messages"][-1].content,
+                                                   "interrupt": "no"})
+                request.app.state.compiled_graph = compiled_graph
+                yield bot_response_content
+            elif snapshot.next and interrupt_status == "no":
+                result = compiled_graph.invoke({
+                    "messages": [
+                        ToolMessage(
+                            tool_call_id=snapshot.values['messages'][-1].tool_call_id,
+                            content=f"API call denied by user. Reasoning: '{interrupt_user_input}'. "
+                                    f"Continue assisting, accounting for the user's input.",
+                            name=snapshot.values["messages"][-1].toll_calls[0]["name"])]},
+                    config)
+                bot_response_content = json.dumps({"bot_response": result["messages"][-1].content,
+                                                   "interrupt": "no"})
+                request.app.state.compiled_graph = compiled_graph
+                yield bot_response_content
             else:
+                events = compiled_graph.stream(input=
+                                               {"messages": ("user", input_msg.strip() if input_msg else None)},
+                                               config=config, stream_mode="updates")
                 for st in events:
                     try:
-                        if "primary_assistant" in st:
-                            bot_response = st["primary_assistant"]["messages"]
+                        snapshot = compiled_graph.get_state(config)
+                        if interrupt_status is None and snapshot.next and "__interrupt__" in st:
+                            bot_response_content = json.dumps({"bot_response": "", "interrupt": "yes"})
+                            request.app.state.compiled_graph = compiled_graph
+                            yield bot_response_content
+                            break
+                        elif list(st.keys())[0] in ["primary_assistant", "update_flight", "book_car_rental",
+                                                    "book_excursion", "book_hotel"]:
+                            bot_response = st[list(st.keys())[0]]["messages"]
                             if bot_response.content:
                                 bot_response_content = json.dumps({"bot_response": bot_response.content,
                                                                    "interrupt": "no"})
+                                request.app.state.compiled_graph = compiled_graph
                                 yield bot_response_content
-                                # yield f"{{\n \'bot_response\': {bot_response.content},\n \'interrupt\': \'no\' \n}}"
                     except Exception as e:
                         raise e
 
@@ -472,13 +522,15 @@ async def generate_bot_message(request: Request, bot_request: BotRequest):
     config = request.app.state.graph_config
     compiled_graph = request.app.state.compiled_graph
     config["configurable"]["passenger_id"] = bot_request.passengerId
-    return StreamingResponse(stream_agent_response(compiled_graph, config, bot_request.input_msg,
-                                                   bot_request.interrupt_status),
+    interrupt_user_input = bot_request.interrupt_user_input
+    return StreamingResponse(stream_agent_response(request, compiled_graph, config, bot_request.input_msg,
+                                                   bot_request.interrupt_status, interrupt_user_input),
                              media_type="text/event-stream")
+
 
 app.include_router(api_router)
 # local changes
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8005)
 
+    uvicorn.run(app, host="127.0.0.1", port=8006)

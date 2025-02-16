@@ -54,7 +54,7 @@ def book_hotel_runnable():
             ("placeholder", "{messages}"),
         ]
     ).partial(time=datetime.now)
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro")
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-lite-preview-02-05")
     book_hotel_safe_tools = [search_hotels]
     book_hotel_sensitive_tools = [book_hotel, update_hotel, cancel_hotel]
     book_hotel_tools = book_hotel_safe_tools + book_hotel_sensitive_tools

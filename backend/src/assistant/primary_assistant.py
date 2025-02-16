@@ -35,7 +35,7 @@ def primary_assistant_runnable():
             ("placeholder", "{messages}"),
         ]
     ).partial(time=datetime.now)
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro")
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-lite-preview-02-05")
     primary_assistant_tools = [
         TavilySearchResults(max_results=5),
         search_flights,

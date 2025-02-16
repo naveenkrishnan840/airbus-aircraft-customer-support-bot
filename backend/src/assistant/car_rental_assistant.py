@@ -64,6 +64,6 @@ def car_rental_runnable():
         update_car_rental,
         cancel_car_rental,
     ]
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro")
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-lite-preview-02-05")
     book_car_rental_tools = book_car_rental_safe_tools + book_car_rental_sensitive_tools
     return book_car_rental_prompt | llm.bind_tools(book_car_rental_tools + [CompleteOrEscalate])

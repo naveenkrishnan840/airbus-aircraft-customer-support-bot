@@ -1,5 +1,6 @@
 import {React, useState, useEffect, useRef} from "react";
 import {TextareaAutosize} from "@mui/base";
+import {Input} from "@mui/material";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -13,7 +14,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { colors } from "@mui/material";
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 const style = {
     position: 'absolute',
@@ -29,9 +30,12 @@ const style = {
   };
 
 const ChatBotBody = () => {
+    const [getPassenger, setGetPassenger] = useState([]);
     const [passengerId, setPassengerId] = useState("");
+    const [interruptUserInput, setInterruptUserInput] = useState("");
     const [open, setOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isInterrupt, setIsInterrupt] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const heightRef = useRef(null);
     const [messages, setMessages] = useState([{
         position: "left",
@@ -48,34 +52,121 @@ const ChatBotBody = () => {
     // const handleOpen = () => {
     //     setOpen(true);
     // };
-    const handleClose = () => {
+    const getPassengerFn = () => {
+        RequestService("/get-passenger-id", {}).then(res => res.json()).then((res) =>{
+            if (res && res.detail){
+             setGetPassenger(res.detail);
+             setIsLoading(false);  
+            }
+        });
+    } 
+    const handleClose = async (e) => {
+        if (e.target.text == "No") {
+            setIsInterrupt(true);
+        } else {
+            setOpen(false);
+            const data = {"input_msg": "", "passengerId": passengerId, "interrupt_status": "yes"}
+            try {
+                setIsLoading(true);
+                const response = await fetch('http://127.0.0.1:8006/bot-message-request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data) ,
+                });
+        
+                const reader = response.body?.getReader();
+                if (!reader) return;
+        
+                const decoder = new TextDecoder();
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    let streamingMessage = decoder.decode(value, { stream: true });
+                    const res = JSON.parse(streamingMessage)
+                    if (res['interrupt'] == "no"){
+                        setIsLoading(false)
+                        setMessages((prevMsg)=>
+                            [...prevMsg, {
+                                position: "left",
+                                type: "text",
+                                title: "Bot",
+                                text: res["bot_response"],
+                                avatar: "https://t4.ftcdn.net/jpg/02/11/61/95/360_F_211619589_fnRk5LeZohVD1hWInMAQkWzAdyVlS5ox.jpg",
+                                className: "text-black max-h-screen font-semibold font-mono",
+                                date: new Date(),
+                                statusTitle: "Received",
+                                status: "received"
+                            }]
+                        )
+                    } else {
+                        setOpen(true)
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to send query:', error);
+                setMessages(prev => [...prev, {
+                type: 'error',
+                content: 'Failed to connect to the server'
+                }]);
+            }
+        }
+    };
+
+    const handleInterruptClose = async () => {
         setOpen(false);
-        const data = {"input_msg": "", "passengerId": passengerId}
-        const response = RequestService("/bot-message-request", data);
-        response.then((res)=>{
-            if (res.detail){
-                if (res.detail.bot_response){
+        setIsInterrupt(false);
+        const data = {"input_msg": "", "passengerId": passengerId, "interrupt_user_input": interruptUserInput, 
+            "interrupt_status": "no"
+        }
+        try {
+            setIsLoading(true)
+            const response = await fetch('http://127.0.0.1:8006/bot-message-request', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data) ,
+            });
+    
+            const reader = response.body?.getReader();
+            if (!reader) return;
+    
+            const decoder = new TextDecoder();
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                let streamingMessage = decoder.decode(value, { stream: true });
+                const res = JSON.parse(streamingMessage)
+                if (res['interrupt'] == "no"){
+                    setIsLoading(false)
                     setMessages((prevMsg)=>
                         [...prevMsg, {
                             position: "left",
                             type: "text",
                             title: "Bot",
-                            text: parse(res.detail),
+                            text: res["bot_response"],
+                            avatar: "https://t4.ftcdn.net/jpg/02/11/61/95/360_F_211619589_fnRk5LeZohVD1hWInMAQkWzAdyVlS5ox.jpg",
                             className: "text-black max-h-screen font-semibold font-mono",
                             date: new Date(),
-                            status: "received",
-                            avatar: "https://t4.ftcdn.net/jpg/02/11/61/95/360_F_211619589_fnRk5LeZohVD1hWInMAQkWzAdyVlS5ox.jpg",
                             statusTitle: "Received",
-                            focus: true
+                            status: "received"
                         }]
                     )
                 } else {
                     setOpen(true)
                 }
             }
-        })
-        
+        } catch (error) {
+            console.error('Failed to send query:', error);
+            setMessages(prev => [...prev, {
+            type: 'error',
+            content: 'Failed to connect to the server'
+            }]);
+        }
     };
+
     const onSubmitForm = async (inputMessage) => {
         setMessages((prevMsg)=>
             [...prevMsg, {
@@ -93,7 +184,7 @@ const ChatBotBody = () => {
         const data = {"input_msg": inputMessage["inputmessage"], "passengerId": passengerId};
         try {
             setIsLoading(true)
-            const response = await fetch('http://127.0.0.1:8005/bot-message-request', {
+            const response = await fetch('http://127.0.0.1:8006/bot-message-request', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -137,7 +228,7 @@ const ChatBotBody = () => {
             }]);
           }
     }
-    const handlePassengerId = (evt) => {
+    const handlePassengerIds = (evt) => {
         setPassengerId(evt.target.value)
     }
     const updateHeight = () => {
@@ -153,6 +244,7 @@ const ChatBotBody = () => {
 
     useEffect(() => {
         RequestService("/compile-langgraph", [])
+        setGetPassenger([]);
       }, []);
 
     return (
@@ -173,8 +265,18 @@ const ChatBotBody = () => {
             Do you approve of the current actions? Type 'yes' to continue, otherwise, explain your requested changed.
           </Typography>
           <Typography align="center" sx={{ mt: 6 }}>
-            <Button color="primary" fullWidth onClick={handleClose}>Yes</Button>
-            <Button color="warning" fullWidth onClick={handleClose}>No</Button>
+            {isInterrupt == true ?
+            <>
+                <div className="flex flex-row justify-center gap-3">
+                    <TextareaAutosize onChange={(e)=>setInterruptUserInput(e.target.value)} value={interruptUserInput} className="w-56 h-28 text-black border-1 p-2 rounded-md"  placeholder="Enter the your input" required></TextareaAutosize>
+                    <Button onClick={handleInterruptClose} color="inherit" >Submit</Button>
+                </div>
+            </> :
+            <>
+                <Button color="primary" fullWidth onClick={handleClose}>Yes</Button>
+                <Button color="warning" fullWidth onClick={handleClose}>No</Button>
+            </>
+            }
           </Typography>
         </Box>
     </Modal>
@@ -208,32 +310,33 @@ const ChatBotBody = () => {
                     <Field name="inputmessage" >
                         {({ field }) => (
                             <>
-                                <FormControl className="hover:opacity-70 focus-visible:outline-none focus-visible:outline-black disabled:text-[#f4f4f4] disabled:hover:opacity-100 dark:focus-visible:outline-white disabled:dark:bg-token-text-quaternary dark:disabled:text-token-main-surface-secondary" sx={{ m: 1, width: 500, marginLeft: 40 }}>
-                                    <InputLabel id="demo-simple-select-standard-label">Passenger Id</InputLabel>
-                                    <Select 
-                                    labelId="demo-simple-select-standard-label"
-                                    id="demo-simple-select-standard"
-                                    value={passengerId}
-                                    onChange={handlePassengerId}
-                                    label="Passenger ID"
-                                    defaultValue={"None"}
-                                    disabled={isLoading}
-                                    >
-                                    <MenuItem value="">
-                                        <em>None</em>
-                                    </MenuItem>
-                                    <MenuItem value={"5763 808478"}>{"5763 808478"}</MenuItem>
-                                    <MenuItem value={"0990 692076"}>{"0990 692076"}</MenuItem>
-                                    <MenuItem value={"0990 692076"}>{"7352 229580"}</MenuItem>
-                                    <MenuItem value={"9420 542320"}>{"9420 542320"}</MenuItem>
-                                    <MenuItem value={"5356 110572"}>{"5356 110572"}</MenuItem>
-                                    {/* {[,,"0990 692076","9420 542320","5356 110572"].map((val) =>
-                                        <>
-                                            <MenuItem value={val}>{val}</MenuItem>
-                                        </>
-                                    )} */}
-                                    </Select>
-                                </FormControl>
+                                <div className="flex flex-row">
+                                    <FormControl className="hover:opacity-70 focus-visible:outline-none focus-visible:outline-black disabled:text-[#f4f4f4] disabled:hover:opacity-100 dark:focus-visible:outline-white disabled:dark:bg-token-text-quaternary dark:disabled:text-token-main-surface-secondary" sx={{ m: 1, width: 500, marginLeft: 40 }}>
+                                        <InputLabel id="demo-simple-select-standard-label">Passenger Id</InputLabel>
+                                        <Select 
+                                        labelId="demo-simple-select-standard-label"
+                                        id="demo-simple-select-standard"
+                                        value={passengerId}
+                                        onChange={handlePassengerIds}
+                                        label="Passenger ID"
+                                        defaultValue={"None"}
+                                        disabled={isLoading}
+                                        >
+                                        <MenuItem value="None">
+                                            <em>None</em>
+                                        </MenuItem>
+                                        {/* <MenuItem value={"5763 808478"}>{"5763 808478"}</MenuItem>
+                                        <MenuItem value={"0990 692076"}>{"0990 692076"}</MenuItem>
+                                        <MenuItem value={"0990 692076"}>{"7352 229580"}</MenuItem>
+                                        <MenuItem value={"9420 542320"}>{"9420 542320"}</MenuItem>
+                                        <MenuItem value={"5356 110572"}>{"5356 110572"}</MenuItem> */}
+                                        {getPassenger.map((val, index) =>
+                                            <MenuItem key={index} value={val}>{val}</MenuItem>
+                                        )}
+                                        </Select>
+                                    </FormControl>
+                                    <Button onClick={getPassengerFn} className="hover:bg-gray-700 h-10 top-4"><PlayArrowIcon className="text-white" /></Button>
+                                </div>
                                 <div className="group flex my-18 mx-40">
                                     <div style={{background: "#2f2f2f"}} id="composer-background" className="flex w-full cursor-text flex-col rounded-3xl px-2.5 py-1 transition-colors contain-inline-size bg-[#f4f4f4] dark:bg-token-main-surface-secondary">
                                         <div className="flex min-h-[44px] items-center px-2" style={{color: "white"}}>

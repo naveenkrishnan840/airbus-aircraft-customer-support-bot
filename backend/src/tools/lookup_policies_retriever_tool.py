@@ -1,6 +1,7 @@
 from langchain_core.tools import tool
 import weaviate
 from langchain.retrievers.document_compressors import CohereRerank, EmbeddingsFilter
+from langchain.retrievers.document_compressors.flashrank_rerank import FlashrankRerank
 # from langchain_cohere import CohereRerank
 from langchain.retrievers import ContextualCompressionRetriever, ParentDocumentRetriever
 from langchain_community.vectorstores import FAISS
@@ -15,14 +16,16 @@ def lookup_policy(query: str) -> str:
     Use this before making any flight changes performing other 'write' events."""
 
     gemini_embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-    vectorstore_local = FAISS.load_local(folder_path="src/database/faiss_db",
+    vectorstore_local = FAISS.load_local(folder_path="backend/src/database/faiss_db",
                                          embeddings=gemini_embeddings, index_name="faiss_db_index",
                                          allow_dangerous_deserialization=True)
-    parent_splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=0)
-    child_splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=0)
-    compressor = CohereRerank(top_n=5, user_agent="langchain")
-    retriever = ParentDocumentRetriever(vectorstore=vectorstore_local, parent_splitter=parent_splitter,
-                                        child_splitter=child_splitter, docstore=InMemoryStore())
+    retriever = vectorstore_local.as_retriever()
+    # compressor = CohereRerank(top_n=5, user_agent="langchain")
+    compressor = FlashrankRerank(top_n=5)
+    # parent_splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=0)
+    # child_splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=0)
+    # retriever = ParentDocumentRetriever(vectorstore=vectorstore_local, parent_splitter=parent_splitter,
+    #                                     child_splitter=child_splitter, docstore=InMemoryStore())
     # compressor = FlashrankRerank()
     # retriever = WeaviateHybridSearchRetriever(
     #     alpha=0.7,  # defaults to 0.5, which is equal weighting between keyword and semantic search

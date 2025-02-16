@@ -26,11 +26,11 @@ def fetch_user_flight_information(config: RunnableConfig) -> list[dict]:
 
     query = """
     SELECT 
-        t.ticket_no, t.book_ref,
+        t.ticket_no, t.book_ref, f.status, tf.amount, ad.model,
         f.flight_id, f.flight_no, f.departure_airport, f.arrival_airport, f.scheduled_departure, f.scheduled_arrival,
-        bp.seat_no, tf.fare_conditions
-    FROM 
-        tickets t
+        bp.seat_no, tf.fare_conditions, bp.boarding_no
+    FROM aircrafts_data ad INNER JOIN	 
+        tickets t on ad.aircraft_code = t.aircraft_code
         JOIN ticket_flights tf ON t.ticket_no = tf.ticket_no
         JOIN flights f ON tf.flight_id = f.flight_id
         JOIN boarding_passes bp ON bp.ticket_no = t.ticket_no AND bp.flight_id = f.flight_id
@@ -116,11 +116,12 @@ def update_ticket_to_new_flight(
     # column_names = [column[0] for column in cursor.description]
     # new_flight_dict = dict(zip(column_names, new_flight))
     timezone = pytz.timezone("Etc/GMT-3")
-    current_time = datetime.now(tz=timezone)
-    departure_time = datetime.strptime(
-        new_flight.loc["scheduled_departure"], "%Y-%m-%d %H:%M:%S.%f%z"
-    )
-    time_until = (departure_time - current_time).total_seconds()
+    current_time = pd.to_datetime(datetime.now(tz=timezone))
+    # departure_time = datetime.strptime(
+    #     new_flight.loc["scheduled_departure"], "%Y-%m-%d %H:%M:%S.%f%z"
+    # )
+    departure_time = pd.to_datetime(new_flight.loc[:, "scheduled_departure"], utc=True)
+    time_until = (departure_time - current_time)[0].seconds
     if time_until < (3 * 3600):
         return (f"Not permitted to reschedule to a flight that is less than 3 hours from the current time. "
                 f"Selected flight is at {departure_time}.")

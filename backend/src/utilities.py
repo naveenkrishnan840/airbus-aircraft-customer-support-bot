@@ -16,6 +16,7 @@ def handle_tool_error(state) -> dict:
             ToolMessage(
                 content=f"Error: {repr(error)}\n please fix your mistakes.",
                 tool_call_id=tc["id"],
+                name=tc["name"]
             )
             for tc in tool_calls
         ]
