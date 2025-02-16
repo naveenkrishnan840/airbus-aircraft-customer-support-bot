@@ -27,12 +27,22 @@ def fetch_user_flight_information(config: RunnableConfig) -> list[dict]:
     query = """
     SELECT 
         t.ticket_no, t.book_ref, f.status, tf.amount, ad.model,
-        f.flight_id, f.flight_no, f.departure_airport, f.arrival_airport, f.scheduled_departure, f.scheduled_arrival,
+        f.flight_id, f.flight_no, 
+        f.departure_airport, (select airport_name from airports_data where airport_code = f.departure_airport) as 
+        departure_airport_name,
+        (select timezone from airports_data where airport_code = f.departure_airport) as departure_airport_timezone, 
+        (select city from airports_data where airport_code = f.departure_airport) as departure_airport_city,
+        f.arrival_airport, (select airport_name from airports_data where airport_code = f.arrival_airport) as 
+        arrival_airport_name,
+        (select city from airports_data where airport_code = f.arrival_airport) as arrival_airport_city,
+        (select timezone from airports_data where airport_code = f.arrival_airport) as arrival_airport_timezone,
+        f.scheduled_departure, f.scheduled_arrival,
         bp.seat_no, tf.fare_conditions, bp.boarding_no
-    FROM aircrafts_data ad INNER JOIN	 
-        tickets t on ad.aircraft_code = t.aircraft_code
+    FROM 
+        tickets t 
         JOIN ticket_flights tf ON t.ticket_no = tf.ticket_no
         JOIN flights f ON tf.flight_id = f.flight_id
+        JOIN aircrafts_data ad on ad.aircraft_code = f.aircraft_code
         JOIN boarding_passes bp ON bp.ticket_no = t.ticket_no AND bp.flight_id = f.flight_id
     WHERE
         t.passenger_id = '{0}'

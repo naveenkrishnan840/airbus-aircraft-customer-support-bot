@@ -15,6 +15,7 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import Tooltip from '@mui/material/Tooltip';
 
 const style = {
     position: 'absolute',
@@ -43,7 +44,7 @@ const ChatBotBody = () => {
         title: "Bot",
         text: "Hi, How can i help you!",
         focus: true,
-        className: "text-black max-h-screen font-semibold font-mono",
+        className: "text-black max-h-screen font-semibold font-mono mr-40",
         date: new Date(),
         status: "received",
         avatar: "https://t4.ftcdn.net/jpg/02/11/61/95/360_F_211619589_fnRk5LeZohVD1hWInMAQkWzAdyVlS5ox.jpg",
@@ -92,9 +93,9 @@ const ChatBotBody = () => {
                                 position: "left",
                                 type: "text",
                                 title: "Bot",
-                                text: res["bot_response"],
+                                text: parse(res["bot_response"]),
                                 avatar: "https://t4.ftcdn.net/jpg/02/11/61/95/360_F_211619589_fnRk5LeZohVD1hWInMAQkWzAdyVlS5ox.jpg",
-                                className: "text-black max-h-screen font-semibold font-mono",
+                                className: "text-black max-h-screen font-semibold font-mono mr-40",
                                 date: new Date(),
                                 statusTitle: "Received",
                                 status: "received"
@@ -146,9 +147,9 @@ const ChatBotBody = () => {
                             position: "left",
                             type: "text",
                             title: "Bot",
-                            text: res["bot_response"],
+                            text: parse(res["bot_response"]),
                             avatar: "https://t4.ftcdn.net/jpg/02/11/61/95/360_F_211619589_fnRk5LeZohVD1hWInMAQkWzAdyVlS5ox.jpg",
-                            className: "text-black max-h-screen font-semibold font-mono",
+                            className: "text-black max-h-screen font-semibold font-mono mr-40",
                             date: new Date(),
                             statusTitle: "Received",
                             status: "received"
@@ -208,9 +209,9 @@ const ChatBotBody = () => {
                             position: "left",
                             type: "text",
                             title: "Bot",
-                            text: res["bot_response"],
+                            text: parse(res["bot_response"]),
                             avatar: "https://t4.ftcdn.net/jpg/02/11/61/95/360_F_211619589_fnRk5LeZohVD1hWInMAQkWzAdyVlS5ox.jpg",
-                            className: "text-black max-h-screen font-semibold font-mono",
+                            className: "text-black max-h-screen font-semibold font-mono mr-40",
                             date: new Date(),
                             statusTitle: "Received",
                             status: "received"
@@ -335,7 +336,9 @@ const ChatBotBody = () => {
                                         )}
                                         </Select>
                                     </FormControl>
+                                    <Tooltip title="Get Passenger Ids">
                                     <Button onClick={getPassengerFn} className="hover:bg-gray-700 h-10 top-4"><PlayArrowIcon className="text-white" /></Button>
+                                    </Tooltip>
                                 </div>
                                 <div className="group flex my-18 mx-40">
                                     <div style={{background: "#2f2f2f"}} id="composer-background" className="flex w-full cursor-text flex-col rounded-3xl px-2.5 py-1 transition-colors contain-inline-size bg-[#f4f4f4] dark:bg-token-main-surface-secondary">

@@ -518,14 +518,17 @@ async def stream_agent_response(request, compiled_graph, config, input_msg, inte
 
 @api_router.post("/bot-message-request")
 async def generate_bot_message(request: Request, bot_request: BotRequest):
-    print(bot_request)
-    config = request.app.state.graph_config
-    compiled_graph = request.app.state.compiled_graph
-    config["configurable"]["passenger_id"] = bot_request.passengerId
-    interrupt_user_input = bot_request.interrupt_user_input
-    return StreamingResponse(stream_agent_response(request, compiled_graph, config, bot_request.input_msg,
-                                                   bot_request.interrupt_status, interrupt_user_input),
-                             media_type="text/event-stream")
+    try:
+        print(bot_request)
+        config = request.app.state.graph_config
+        compiled_graph = request.app.state.compiled_graph
+        config["configurable"]["passenger_id"] = bot_request.passengerId
+        interrupt_user_input = bot_request.interrupt_user_input
+        return StreamingResponse(stream_agent_response(request, compiled_graph, config, bot_request.input_msg,
+                                                       bot_request.interrupt_status, interrupt_user_input),
+                                 media_type="text/event-stream")
+    except Exception as e:
+        raise e
 
 
 app.include_router(api_router)
