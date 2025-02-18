@@ -36,7 +36,7 @@ def flight_runnable():
             ("placeholder", "{messages}"),
         ]
     ).partial(time=datetime.now)
-    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-lite-preview-02-05")
+    llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
     update_flight_safe_tools = [search_flights]
     update_flight_sensitive_tools = [cancel_ticket, update_ticket_to_new_flight]
     update_flight_tools = update_flight_safe_tools + update_flight_sensitive_tools
