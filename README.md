@@ -153,7 +153,7 @@ The system is built on a modern tech stack with three distinct agent types, each
    - Automatic content structuring and organization
 
 3. **AI Decision Making**
-   - Multiple LLM integration (Gemnin, deepseek)
+   - Multiple LLM integration (Gemnini, deepseek)
    - Context-aware navigation
    - Self-review mechanisms
    - Structured output generation
