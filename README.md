@@ -41,7 +41,7 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
   - Multi-Agent Coordination: Orchestrates communication across different agents to deliver a unified response. It integrates information from multiple agents (e.g., flight     and hotel) to create a seamless user experience.
   - Intent Detection: Identifies the nature of the user’s request (e.g., booking a flight, reserving a hotel, renting a car) and triggers the appropriate agent.
     Personalized Recommendations: Provides suggestions based on user preferences, past interactions, or stored information across all agents.
-  - Tools:
+##### Tools:
   - Route Query: Directs user questions to the appropriate assistant based on the service requested (Flight, Hotel, Car, Excursion).
   - Context Management: Tracks the conversation flow, manages the context, and keeps the user journey consistent.
 ## Agent Types
