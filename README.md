@@ -32,8 +32,8 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
 
 ## Key Features
 
-### Agent Capabilities
-  1. Primary Assistant
+## Agent Capabilities
+  ### 1. Primary Assistant
   The Primary Assistant is the central control hub that manages the conversation and directs queries to the appropriate agent based on user intent.
 #### Capabilities:
   - Request Routing: Recognizes user queries and forwards them to the relevant assistant (Flight, Car Rental, Hotel, or Excursion Assistant).
