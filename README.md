@@ -30,7 +30,7 @@ The <b>Airbus Aircraft Customer Chat Bot </b> is an intelligent, multi-agent sys
 # Motivation
 Efficiency meets innovation. With the power of intelligent technology, you can navigate the complexities of travel with ease and confidence. The Airbus Aircraft Customer Chat Bot doesn’t just streamline your journey—it transforms it, offering you a personalized, seamless experience that lets you focus on what truly matters: enjoying the adventure ahead. Whether it’s booking flights, hotels, or planning exciting excursions, let technology be your trusted companion in making every step of your travel smarter and more enjoyable. Embrace the future of travel and make every moment count.
 
-## Key Features
+## Key Features & Agent Types
 
 ## Agent Capabilities
   ### 1. Primary Assistant
@@ -99,31 +99,24 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
 3. Update: Handles updates for existing hotel reservations, such as modifying dates or room types.
 4. Cancel: Manages cancellation of hotel bookings and processes refunds where applicable.
 
-## Agent Types
+### 5. Excursion Assistant
+  The Excursion Assistant allows users to explore and book excursions, activities, and tours at various locations.
 
-### 1. Primary Agent
-A specialized automation agent for executing web-based tasks and workflows.
-- Custom action planning for multi-step tasks
-- Dynamic element interaction based on context
-- Real-time task progress monitoring
-
-### 2. Flight Booking Agent
-An information gathering specialist with smart content processing.
-- Intelligent source selection and validation
-- Adaptive search refinement
-- Single-pass comprehensive information gathering
-
-### 3. hotel Booking Agent
-An advanced research agent that produces academic-quality content through systematic topic exploration.
-- Automatic topic decomposition and structured research
-- Independent subtopic exploration
-- Academic paper generation with proper citations
-- Cross-referenced bibliography compilation
-
-### 4. Car Rental Agent
-
-### 5. Excursion Booking Agent
-
+#### Capabilities:
+  1. Excursion Search: Retrieves details of available excursions based on location, type (landmark, history, art, etc.), and user preferences.
+       - Example:
+          - Basel Minster (landmark, history) in Basel.
+          - Kunstmuseum Basel (art, museum) in Basel.
+          - Zurich Old Town (history, architecture) in Zurich.
+          - Lucerne Chapel Bridge (landmark, history) in Lucerne.
+          - Excursion Booking: Enables users to book excursions or tours based on selected dates, locations, and activities.
+          - Excursion Update: Users can modify bookings for excursions, such as changing the date or activity details.
+          - Excursion Cancellation: Manages cancellation of excursion bookings, including refund options where necessary.
+##### Tools:
+  1. Search: Queries available excursions from the database based on user location and activity type.
+  2. Book: Facilitates booking of excursions, including details of the activity, dates, and special requests.
+  3. Update: Handles modifications to excursion bookings, including date changes or activity preferences.
+  4. Cancel: Allows users to cancel their excursion bookings and processes refund requests when applicable.
 
 ### Agent Architecture Diagrams
 
