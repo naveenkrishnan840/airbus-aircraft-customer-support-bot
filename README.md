@@ -44,6 +44,25 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
 ##### Tools:
   - Route Query: Directs user questions to the appropriate assistant based on the service requested (Flight, Hotel, Car, Excursion).
   - Context Management: Tracks the conversation flow, manages the context, and keeps the user journey consistent.
+
+  2. Flights Assistant
+     The Flights Assistant is responsible for assisting users with flight bookings, availability checks, and flight-related queries.
+
+#### Capabilities:
+  - Flight Search: Retrieves flight details from the MySQL database and shows available flights.
+      Example:
+      - QR0051: BSL to BKK, Scheduled for 2025-03-09 at 15:08 (departure) and 20:13 (arrival).
+      - CA0065: GVA to DEN, Scheduled for 2025-03-11 at 15:33 (departure) and 20:13 (arrival).
+      - BA0022: SEZ to SHA, Scheduled for 2025-03-01 at 17:33 (departure) and 23:23 (arrival).
+      - Flight Booking: Allows users to book flights based on search results, entering user details (names, seats, preferences) into the system.
+      - Flight Update: Users can request changes (e.g., date changes, seat selection) to booked flights.
+      - Flight Cancellation: Enables users to cancel an existing flight reservation, either fully or partially.
+##### Tools:
+  - Search: Queries available flights from the database based on user input (e.g., departure date, source, and destination).
+  - Book: Allows flight booking by processing user preferences and providing confirmation details.
+  - Update: Facilitates modification of flight bookings, such as changing travel dates, or seat preferences.
+  - Cancel: Manages cancellation of flight bookings and provides options to the user, including refund or rebooking.
+    
 ## Agent Types
 
 ### 1. Primary Agent
