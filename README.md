@@ -81,6 +81,24 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
   3. Update: Manages changes to existing reservations, such as modifying pickup dates or vehicle categories.
   4. Cancel: Handles cancellations for car rental bookings and initiates refund processes when applicable.
 
+### 4. Hotel Assistant
+  The Hotel Assistant helps users with hotel searches, availability, bookings, and modifications.
+
+#### Capabilities:
+  1. Hotel Search: Retrieves available hotels based on location, category (luxury, upscale, etc.), and dates.
+      - Example:
+         - Hilton Basel (Luxury) for 2024-04-22 to 2024-04-20.
+         - Marriott Zurich (Upscale) for 2024-04-14 to 2024-04-21.
+         - Hyatt Regency Basel (Upper Upscale) for 2024-04-02 to 2024-04-20.
+         - Hotel Booking: Users can book rooms at selected hotels, choosing their room preferences (e.g., single, double, suite) and finalizing their reservation.
+         - Hotel Update: Allows users to update existing reservations, such as changing check-in/check-out dates or room preferences.
+         - Hotel Cancellation: Facilitates hotel reservation cancellation, and provides users with refund or rebooking options.
+##### Tools:
+1. Search: Retrieves hotel availability from the database, considering the location, dates, and hotel category preferences.
+2. Book: Assists with hotel room reservations, confirming booking details.
+3. Update: Handles updates for existing hotel reservations, such as modifying dates or room types.
+4. Cancel: Manages cancellation of hotel bookings and processes refunds where applicable.
+
 ## Agent Types
 
 ### 1. Primary Agent
