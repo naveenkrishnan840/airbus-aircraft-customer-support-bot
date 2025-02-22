@@ -138,23 +138,17 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
 The system is built on a modern tech stack with three distinct agent types, each powered by:
 
 1. **State Management**
-   - LangGraph for maintaining agent state
+   - LangGraph for maintaining agent message state
    - Handles complex navigation flows and decision making
    - Structured workflow management
-
-2. **Browser Automation**
-   - Playwright for reliable web interaction
-   - Custom element detection and interaction system
-   - Automated navigation and content extraction
-
-3. **Content Processing**
+    
+2. **Content Processing**
    - RAG (Retrieval Augmented Generation) pipeline
    - Vector store integration for efficient information storage
-   - PDF and webpage content extraction
    - Automatic content structuring and organization
 
-4. **AI Decision Making**
-   - Multiple LLM integration (GPT-4, Claude)
+3. **AI Decision Making**
+   - Multiple LLM integration (Gemnin, deepseek)
    - Context-aware navigation
    - Self-review mechanisms
    - Structured output generation
@@ -165,7 +159,7 @@ The system is built on a modern tech stack with three distinct agent types, each
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/hrithikkoduri18/WebRover.git
+   git clone https://github.com/naveenkrishnan840/customer-support-bot.git
    cd customer_support_bot
    cd backend
    ```
@@ -252,23 +246,6 @@ The system is built on a modern tech stack with three distinct agent types, each
 For mac users: 
 
 Try running http://localhost:3000 on Safari browser. 
-If you face any with connecting to browser, open terminal and run:
-
-```bash
-pkill -9 "Chrome"
-```
-and try again.
-
-If you still face issues, try changing the websocket port from 9222 to 9223 in the `webrover_browser.py` file in the `backend/Browser` folder.
-
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ## License
 
