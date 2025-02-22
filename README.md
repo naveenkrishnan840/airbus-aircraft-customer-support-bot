@@ -45,8 +45,8 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
   - Route Query: Directs user questions to the appropriate assistant based on the service requested (Flight, Hotel, Car, Excursion).
   - Context Management: Tracks the conversation flow, manages the context, and keeps the user journey consistent.
 
-  2. Flights Assistant
-     The Flights Assistant is responsible for assisting users with flight bookings, availability checks, and flight-related queries.
+### 2. Flights Assistant
+  The Flights Assistant is responsible for assisting users with flight bookings, availability checks, and flight-related queries.
 
 #### Capabilities:
   - Flight Search: Retrieves flight details from the MySQL database and shows available flights.
@@ -62,7 +62,25 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
   - Book: Allows flight booking by processing user preferences and providing confirmation details.
   - Update: Facilitates modification of flight bookings, such as changing travel dates, or seat preferences.
   - Cancel: Manages cancellation of flight bookings and provides options to the user, including refund or rebooking.
-    
+### 3. Car Rental Assistant
+  The Car Rental Assistant handles car rental searches, bookings, and changes related to rental vehicles.
+
+#### Capabilities:
+  1. Car Rental Search: Retrieves available car rental options based on user preferences and location.
+     - Example:
+         - Europcar (Economy) in Basel from 2024-04-14 to 2024-04-11.
+         - Avis (Luxury) in Basel from 2024-04-10 to 2024-04-20.
+         - Hertz (Midsize) in Zurich from 2024-04-10 to 2024-04-07.
+         - Sixt (SUV) in Bern from 2024-04-20 to 2024-04-26.
+  2. Car Rental Booking: Facilitates car rental booking based on available options, allowing users to select vehicle type, pickup/dropoff locations, and rental dates.
+  3. Car Rental Update: Users can request changes to an existing car rental, such as altering the rental period or car type.
+  4. Car Rental Cancellation: Provides the ability to cancel a car rental reservation, either entirely or for specific dates.
+##### Tools:
+  1. Search: Allows users to search for car rental availability based on location, vehicle type, and rental dates.
+  2. Book: Facilitates car rental bookings, ensuring availability and confirming reservation details.
+  3. Update: Manages changes to existing reservations, such as modifying pickup dates or vehicle categories.
+  4. Cancel: Handles cancellations for car rental bookings and initiates refund processes when applicable.
+
 ## Agent Types
 
 ### 1. Primary Agent
