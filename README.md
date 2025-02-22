@@ -35,6 +35,12 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
 ### Agent Capabilities
   1. Primary Assistant
   The Primary Assistant is the central control hub that manages the conversation and directs queries to the appropriate agent based on user intent.
+#### Capabilities:
+  - Request Routing: Recognizes user queries and forwards them to the relevant assistant (Flight, Car Rental, Hotel, or Excursion Assistant).
+  - Context Management: Keeps track of the ongoing conversation, ensuring that user queries are contextually linked and coherent even when switching between services.  
+  - Multi-Agent Coordination: Orchestrates communication across different agents to deliver a unified response. It integrates information from multiple agents (e.g., flight     and hotel) to create a seamless user experience.
+  - Intent Detection: Identifies the nature of the user’s request (e.g., booking a flight, reserving a hotel, renting a car) and triggers the appropriate agent.
+    Personalized Recommendations: Provides suggestions based on user preferences, past interactions, or stored information across all agents.
   
 ## Agent Types
 
