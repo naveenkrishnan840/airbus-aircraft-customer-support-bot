@@ -70,33 +70,36 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
 
 ## Agent Types
 
-### 1. Task Agent
+### 1. Primary Agent
 A specialized automation agent for executing web-based tasks and workflows.
 - Custom action planning for multi-step tasks
 - Dynamic element interaction based on context
 - Real-time task progress monitoring
 
-### 2. Research Agent
+### 2. Flight Booking Agent
 An information gathering specialist with smart content processing.
 - Intelligent source selection and validation
 - Adaptive search refinement
 - Single-pass comprehensive information gathering
 
-### 3. Deep Research Agent (New! 🎉)
+### 3. hotel Booking Agent
 An advanced research agent that produces academic-quality content through systematic topic exploration.
 - Automatic topic decomposition and structured research
 - Independent subtopic exploration
 - Academic paper generation with proper citations
 - Cross-referenced bibliography compilation
 
+### 4. Car Rental Agent
+
+### 5. Excursion Booking Agent
+
+
 ### Agent Architecture Diagrams
 
-#### Deep Research Agent Flow
+#### Deep multi Agent Work Flow
 <img src="https://github.com/naveenkrishnan840/customer-support-bot/blob/main/graph.png"/>
 
 *Multi Agent's workflow for comprehensive booking and content generation*
-
-
 
 ## Architecture
 
