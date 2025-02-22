@@ -92,7 +92,7 @@ An advanced research agent that produces academic-quality content through system
 ### Agent Architecture Diagrams
 
 #### Deep Research Agent Flow
-![Deep Research Agent Architecture](assets/deep_research_agent.png)
+<img src="https://github.com/naveenkrishnan840/customer-support-bot/blob/main/graph.png"/>
 
 *Multi Agent's workflow for comprehensive booking and content generation*
 
