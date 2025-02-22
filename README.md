@@ -132,7 +132,13 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
 <img src="https://github.com/naveenkrishnan840/customer-support-bot/blob/main/graph.png"/>
 
 *Multi Agent's workflow for comprehensive booking and content generation*
-
+## Extract the aircraft information
+### Populate information to database
+  #### url https://storage.googleapis.com/benchmarks-artifacts/travel-db/travel2.sqlite
+  This url is need to extract the information to create & insert the records.
+  #### url https://storage.googleapis.com/benchmarks-artifacts/travel-db/swiss_faq.md
+  This url is need to extract the information to create the retriever information
+  
 ## Architecture
 
 The system is built on a modern tech stack with three distinct agent types, each powered by:
