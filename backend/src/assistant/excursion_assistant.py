@@ -1,10 +1,9 @@
-from backend.src.tools.excursions import *
+from src.tools.excursions import *
 from langchain.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from datetime import datetime
-from backend.src.utilities import CompleteOrEscalate
+from src.utilities import CompleteOrEscalate
 from pydantic import BaseModel, Field
-
 
 class ToBookExcursion(BaseModel):
     """Transfers work to a specialized assistant to handle trip recommendation and other excursion bookings."""

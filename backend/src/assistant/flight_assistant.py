@@ -1,8 +1,8 @@
-from backend.src.tools.flights import search_flights, update_ticket_to_new_flight, cancel_ticket
+from src.tools.flights import search_flights, update_ticket_to_new_flight, cancel_ticket
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import ChatPromptTemplate
 from datetime import datetime
-from backend.src.utilities import CompleteOrEscalate
+from src.utilities import CompleteOrEscalate
 from pydantic import BaseModel, Field
 
 

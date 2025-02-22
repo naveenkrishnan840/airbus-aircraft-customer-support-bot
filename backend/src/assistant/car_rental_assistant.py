@@ -1,8 +1,8 @@
-from backend.src.tools.car_rental import *
+from src.tools.car_rental import *
 from langchain.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from datetime import datetime
-from backend.src.utilities import CompleteOrEscalate
+from src.utilities import CompleteOrEscalate
 from pydantic import BaseModel, Field, ConfigDict
 
 

@@ -1,5 +1,4 @@
 from langchain_core.tools import tool
-import weaviate
 from langchain.retrievers.document_compressors import CohereRerank, EmbeddingsFilter
 from langchain.retrievers.document_compressors.flashrank_rerank import FlashrankRerank
 # from langchain_cohere import CohereRerank

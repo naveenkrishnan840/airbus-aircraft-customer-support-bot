@@ -22,10 +22,11 @@ langsmith = "0.1.144"
 langchain-nomic = "0.1.4"
 fastapi = "0.115.5"
 pydantic = "2.10.2"
-uvicorn = "^0.20.0"
+uvicorn = ">=0.26.0"
 itsdangerous = "2.2.0"
 PyMySQL = "1.1.1"
 faiss-cpu = "^1.10.0"
+langgraph-cli = {extras = ["inmem"], version = "^0.1.73"}
 
 [build-system]
 requires = ["poetry-core"]

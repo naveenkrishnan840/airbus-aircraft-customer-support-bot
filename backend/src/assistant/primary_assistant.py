@@ -4,12 +4,12 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.tools.tavily_search.tool import TavilySearchResults
 
 
-from backend.src.tools.flights import search_flights
-from backend.src.tools.lookup_policies_retriever_tool import lookup_policy
-from backend.src.assistant.flight_assistant import ToFlightBookingAssistant
-from backend.src.assistant.hotel_assistant import ToHotelBookingAssistant
-from backend.src.assistant.excursion_assistant import ToBookExcursion
-from backend.src.assistant.car_rental_assistant import ToBookCarRental
+from src.tools.flights import search_flights
+from src.tools.lookup_policies_retriever_tool import lookup_policy
+from src.assistant.flight_assistant import ToFlightBookingAssistant
+from src.assistant.hotel_assistant import ToHotelBookingAssistant
+from src.assistant.excursion_assistant import ToBookExcursion
+from src.assistant.car_rental_assistant import ToBookCarRental
 
 
 def primary_assistant_runnable():
