@@ -94,18 +94,7 @@ An advanced research agent that produces academic-quality content through system
 #### Deep Research Agent Flow
 ![Deep Research Agent Architecture](assets/deep_research_agent.png)
 
-*Deep Research Agent's workflow for comprehensive research and content generation*
-
-### Research Agent Flow
-![Research Agent Architecture](assets/research_agent.png)
-
-*Research Agent's workflow for information gathering and synthesis*
-
-
-#### Task Agent Flow
-![Task Agent Architecture](assets/task_agent.png)
-
-*Task Agent's workflow for automating web interactions*
+*Multi Agent's workflow for comprehensive booking and content generation*
 
 
 
