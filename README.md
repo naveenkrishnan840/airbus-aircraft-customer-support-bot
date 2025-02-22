@@ -1,4 +1,4 @@
-# Airbus Customer Support Bot
+# Airbus Aircraft Customer Support Bot
 
 <div align="center">
   <!-- Backend -->
@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" />
   <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" />
 
-  <h3>Your AI Co-pilot for Airbus Customer Chat Bot 🚀</h3>
+  <h3>Your AI Co-pilot for Airbus Aircraft Customer Chat Bot 🚀</h3>
 
   <p align="center">
     <b>Autonomous Flight Booking Agent | Hostel Booking Agent | Car Rental Agent | Excursion Booking Agent | Customer Policy Information Retrieval </b>
@@ -25,7 +25,7 @@
 </div>
 
 # Overview
-The <b>Airbus Customer Chat Bot </b> is an intelligent, multi-agent system that provides a seamless, efficient, and personalized experience for users booking flights, hotels, car rentals, and excursions. With its ability to access real-time data via MySQL, interact across multiple service categories, and use AI-powered NLP for context-driven conversations, this bot is a powerful tool for both customers and businesses. By leveraging advanced technologies, the bot helps streamline complex travel arrangements and delivers an exceptional customer experience.
+The <b>Airbus Aircraft Customer Chat Bot </b> is an intelligent, multi-agent system that provides a seamless, efficient, and personalized experience for users booking flights, hotels, car rentals, and excursions. With its ability to access real-time data via MySQL, interact across multiple service categories, and use AI-powered NLP for context-driven conversations, this bot is a powerful tool for both customers and businesses. By leveraging advanced technologies, the bot helps streamline complex travel arrangements and delivers an exceptional customer experience.
 
 # Motivation
 While traditional web automation tools excel at task execution, and search engines help with information retrieval, there's a growing need for tools that can handle both while specializing in deep research workflows. WebRover bridges this gap by offering task automation alongside intelligent research capabilities, with a particular focus on comprehensive information gathering, analysis, and synthesis. This dual-purpose approach aims to transform how we interact with web content, making both task execution and research more efficient and thorough.
