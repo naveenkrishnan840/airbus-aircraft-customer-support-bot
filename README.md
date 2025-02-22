@@ -198,7 +198,7 @@ ai-hedge-fund/
 1. Clone the repository
    ```bash
    git clone https://github.com/naveenkrishnan840/customer-support-bot.git
-   cd customer_support_bot
+   cd customer-support-bot
    cd backend
    ```
 
@@ -239,11 +239,17 @@ ai-hedge-fund/
 
 6. Set up environment variables in `.env`:
    ```bash
-   OPENAI_API_KEY="your_openai_api_key"
-   LANGCHAIN_API_KEY="your_langchain_api_key"
-   LANGCHAIN_TRACING_V2="true"
-   LANGCHAIN_ENDPOINT="https://api.smith.langchain.com"
-   LANGCHAIN_PROJECT="your_project_name"
+    GOOGLE_API_KEY="Your api key"
+    TAVILY_API_KEY="Your api key"
+    COHERE_API_KEY="Your api key"
+    MYSQL_HOST="Your host url"
+    MYSQL_USER="Your user"
+    MYSQL_PASSWORD="your password"
+    MYSQL_DB="your database name"
+    LANGCHAIN_TRACING_V2=true
+    LANGCHAIN_ENDPOINT="https://api.smith.langchain.com"
+    LANGCHAIN_API_KEY="your api key"
+    LANGCHAIN_PROJECT="your project name"
    ```
 
 7. Run the backend:
