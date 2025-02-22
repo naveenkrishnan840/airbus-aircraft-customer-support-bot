@@ -30,7 +30,7 @@ The <b>Airbus Aircraft Customer Chat Bot </b> is an intelligent, multi-agent sys
 # Motivation
 Efficiency meets innovation. With the power of intelligent technology, you can navigate the complexities of travel with ease and confidence. The Airbus Aircraft Customer Chat Bot doesn’t just streamline your journey—it transforms it, offering you a personalized, seamless experience that lets you focus on what truly matters: enjoying the adventure ahead. Whether it’s booking flights, hotels, or planning exciting excursions, let technology be your trusted companion in making every step of your travel smarter and more enjoyable. Embrace the future of travel and make every moment count.
 
-## Key Features & Agent Types
+## Agents Features & Agent Types & Agent Informations
 
 ## Agent Capabilities
   ### 1. Primary Assistant
@@ -118,6 +118,10 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
   3. Update: Handles modifications to excursion bookings, including date changes or activity preferences.
   4. Cancel: Allows users to cancel their excursion bookings and processes refund requests when applicable.
 
+### General Tools:
+  1. Customer policy information
+  2. TavilySearch
+     
 ### Agent Architecture Diagrams
 
 #### Deep multi Agent Work Flow
