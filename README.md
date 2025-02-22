@@ -120,7 +120,11 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
 
 ### General Tools:
   1. Customer policy information
-  2. TavilySearch
+       - Customer Policy Information typically refers to the set of rules and guidelines that govern interactions between a service provider (e.g., airline, hotel,
+          car rental company, excursion provider) and its customers.
+  3. TavilySearch
+       - TavilySearch seems to be a search service or tool that could be involved in searching for various travel-related offerings (flights, hotels,
+          car rentals, excursions). This could be part of an API or platform providing a seamless search experience for users.
      
 ### Agent Architecture Diagrams
 
