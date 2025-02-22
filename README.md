@@ -28,7 +28,7 @@
 The <b>Airbus Aircraft Customer Chat Bot </b> is an intelligent, multi-agent system that provides a seamless, efficient, and personalized experience for users booking flights, hotels, car rentals, and excursions. With its ability to access real-time data via MySQL, interact across multiple service categories, and use AI-powered NLP for context-driven conversations, this bot is a powerful tool for both customers and businesses. By leveraging advanced technologies, the bot helps streamline complex travel arrangements and delivers an exceptional customer experience.
 
 # Motivation
-While traditional web automation tools excel at task execution, and search engines help with information retrieval, there's a growing need for tools that can handle both while specializing in deep research workflows. WebRover bridges this gap by offering task automation alongside intelligent research capabilities, with a particular focus on comprehensive information gathering, analysis, and synthesis. This dual-purpose approach aims to transform how we interact with web content, making both task execution and research more efficient and thorough.
+Efficiency meets innovation. With the power of intelligent technology, you can navigate the complexities of travel with ease and confidence. The Airbus Aircraft Customer Chat Bot doesn’t just streamline your journey—it transforms it, offering you a personalized, seamless experience that lets you focus on what truly matters: enjoying the adventure ahead. Whether it’s booking flights, hotels, or planning exciting excursions, let technology be your trusted companion in making every step of your travel smarter and more enjoyable. Embrace the future of travel and make every moment count.
 
 ## Key Features
 
