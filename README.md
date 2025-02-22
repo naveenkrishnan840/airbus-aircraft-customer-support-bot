@@ -159,6 +159,38 @@ The system is built on a modern tech stack with three distinct agent types, each
    - Self-review mechanisms
    - Structured output generation
 
+
+## Project Structure 
+```
+ai-hedge-fund/
+├── src/
+│   ├── assistant/                           # Agent definitions and workflow
+│   │   ├── __init__.py                      # init file
+│   │   ├── primary_assistant.py             # primary assistant agent
+│   │   ├── hotel_assistant.py               # hotel_assistant agent
+│   │   ├── flight_assistant.py              # flight assistant agent
+│   │   ├── car_rental_assistant.py          # Car rental agent
+│   │   ├── excursion_assistant.py           # Car rental agent
+|   ├── database                             # To store the vector files
+│   ├── tools/                               # Agent tools
+│   │   ├── __init__.py                      # init file
+|   |   ├── car_rental.py                    # To handle the search, update, cancel things
+|   |   ├── flights.py                       # To handle the search, update, cancel things
+|   |   ├── hotels.py                        # To handle the search, update, cancel things
+|   |   ├── excursions.py                    # To handle the search, update, cancel things
+|   |   ├── lookup_policies_search_tool.py   # To retrieve the policy content
+│   ├── build_graph.py                       # building the graph
+|   ├── question.py
+|   ├── request_validate.py                  # request validation
+|   ├── utilities.py 
+│────── .env # If you want
+│────── data_insertion.py # customer related records insert to mysql db
+│────── pyproject.toml # create virtual env using poetry
+│────── main.py # Main entry point
+├── pyproject.toml
+├── ...
+```
+
 ## Setup Instructions
 
 ### Backend Setup
