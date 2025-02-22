@@ -33,41 +33,9 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
 ## Key Features
 
 ### Agent Capabilities
-- Three specialized agents for different use cases (Task, Research, Deep Research)
-- Dynamic agent selection based on task complexity
-- Real-time agent state visualization
-- Streaming agent actions and thoughts
-
-### Browser Integration
-- Local browser instance for privacy and control
-- Multi-tab management
-- PDF document handling
-- Secure browsing sessions
-
-### User Interface
-- Modern chat interface with real-time updates
-- Interactive agent selection
-- Action streaming with visual feedback
-- Real-time page annotations and highlights
-
-### Output Options
-- Direct chat responses
-- One-click Google Docs export
-- PDF download functionality
-- Copy to clipboard support
-
-### Research Tools
-- Vector store for information retention
-- Multi-source verification
-- Academic paper generation
-- Reference management
-
-### Technical Features
-- State-of-the-art LLM integration (GPT-4o, o3-mini-high, Claude-3.5 sonnet)
-- RAG pipeline for enhanced responses
-- LangGraph for state management
-- Playwright for reliable web automation
-
+  1. Primary Assistant
+  The Primary Assistant is the central control hub that manages the conversation and directs queries to the appropriate agent based on user intent.
+  
 ## Agent Types
 
 ### 1. Primary Agent
