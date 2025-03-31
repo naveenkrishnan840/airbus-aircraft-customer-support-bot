@@ -207,8 +207,8 @@ async def generate_bot_message(request: Request, bot_request: BotRequest):
 
 
 app.include_router(api_router)
-# local changes
-if __name__ == "__main__":
-    import uvicorn
+# # local changes
+# if __name__ == "__main__":
+#     import uvicorn
 
-    uvicorn.run(app, host="127.0.0.1", port=8006)
+#     uvicorn.run(app, host="127.0.0.1", port=8006)
