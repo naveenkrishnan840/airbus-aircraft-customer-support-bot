@@ -7,6 +7,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph
 from langgraph.prebuilt import tools_condition
 from langgraph.graph import START, END
+from langchain_core.messages import ToolMessage
 from fastapi import FastAPI, APIRouter, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
