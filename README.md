@@ -128,8 +128,10 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
 ### Travel Assistant Query List
 
 #### ✈️ Flights
-    - Hi there, what time is my flight?
-    - Am I allowed to update my flight to something sooner? I want to leave later today.
+      Hi there, what time is my flight?
+
+      
+      Am I allowed to update my flight to something sooner? I want to leave later today.
     - Update my flight to sometime next week then.
     - The next available option is great.
     - Can you provide me with the details of my flight, including the flight number and departure time?
