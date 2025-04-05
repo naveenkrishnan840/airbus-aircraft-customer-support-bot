@@ -58,7 +58,7 @@ async def get_passenger(request: Request, db_session=Depends(get_session_local))
             JOIN ticket_flights tf ON t.ticket_no = tf.ticket_no
             JOIN flights f ON tf.flight_id = f.flight_id
             JOIN boarding_passes bp ON bp.ticket_no = t.ticket_no AND bp.flight_id = f.flight_id
-        ORDER BY RAND() LIMIT 10
+        ORDER BY RAND() LIMIT 15
         """
         result = pd.read_sql(query, db_session)["passenger_id"].to_list()
         return HTTPException(status_code=200, detail=result)
