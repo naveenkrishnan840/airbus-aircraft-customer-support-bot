@@ -128,17 +128,33 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
 ### Travel Assistant Query List
 
 #### ✈️ Flights
-  ```text
-  Hi there, what time is my flight?
-  ```
-      Am I allowed to update my flight to something sooner? I want to leave later today.
-      Update my flight to sometime next week then.
-      The next available option is great.
-      Can you provide me with the details of my flight, including the flight number and departure time?
-      Are there any earlier flights available today?
-      Can I change my return flight to a later date next week?
-      Can I upgrade my flight or hotel to first-class or a suite?
-      How can I make sure I don’t miss my flight?
+```text
+Hi there, what time is my flight?
+```
+```text
+Am I allowed to update my flight to something sooner? I want to leave later today.
+```
+```text
+Update my flight to sometime next week then.
+```
+```text
+The next available option is great.
+```
+```text
+Can you provide me with the details of my flight, including the flight number and departure time?
+```
+```text
+Are there any earlier flights available today?
+```
+```text
+Can I change my return flight to a later date next week?
+```
+```text
+Can I upgrade my flight or hotel to first-class or a suite?
+```
+```text
+How can I make sure I don’t miss my flight?
+```
 
 #### 🏨 Lodging
       What about lodging and transportation?
