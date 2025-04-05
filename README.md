@@ -157,51 +157,120 @@ How can I make sure I don’t miss my flight?
 ```
 
 #### 🏨 Lodging
-      What about lodging and transportation?
-      Yeah, I think I'd like an affordable hotel for my week-long stay (7 days). And I'll want to rent a car.
-      OK, could you place a reservation for your recommended hotel? It sounds nice.
-      Yes, go ahead and book anything that's moderate expense and has availability.
-      What hotels are available in the area? Can you send me a list?
-      How far is the hotel from the airport? Is transportation provided?
-      What time do I need to check out of the hotel on my last day?
-
+```text
+What about lodging and transportation?
+```
+```text
+Yeah, I think I'd like an affordable hotel for my week-long stay (7 days). And I'll want to rent a car.
+```
+```text
+OK, could you place a reservation for your recommended hotel? It sounds nice.
+```
+```text
+Yes, go ahead and book anything that's moderate expense and has availability.
+```
+```text
+What hotels are available in the area? Can you send me a list?
+```
+```text
+How far is the hotel from the airport? Is transportation provided?
+```
+```text
+What time do I need to check out of the hotel on my last day?
+```
 #### 🚗 Car Rental
-      Now for a car, what are my options?
-      Awesome, let's just get the cheapest option. Go ahead and book for 7 days.
-      Can you suggest a rental car that’s fuel-efficient and affordable?
-      Can you confirm the car rental reservation for me once it’s done?
-
+```text
+Now for a car, what are my options?
+```
+```text
+Awesome, let's just get the cheapest option. Go ahead and book for 7 days.
+```
+```text
+Can you suggest a rental car that’s fuel-efficient and affordable?
+```
+```text
+Can you confirm the car rental reservation for me once it’s done?
+```
 #### 🗺️ Excursion Assistant Queries
-      Cool, so now what recommendations do you have on excursions?
-      Are they available while I'm there?
-      Interesting — I like the museums, what options are there?
-      OK, great, pick one and book it for my second day there.
-      Are there any discounts or deals available for attractions and tours?
-      Are there any events or festivals happening while I’m there?
-      Can you book tickets for a specific event or concert I’m interested in?
-      Are there any cultural experiences or local tours I should check out?
-      Are there any free or budget-friendly activities I can do in the city?
-      What’s the best way to get around the city? Should I use public transportation or rely on my rental car?
-      What’s the weather forecast during my stay?
+```text
+Cool, so now what recommendations do you have on excursions?
+```
+```text
+Are they available while I'm there?
+```
+```text
+Interesting — I like the museums, what options are there?
+```
+```text
+OK, great, pick one and book it for my second day there.
+```
+```text
+Are there any discounts or deals available for attractions and tours?
+```
+```text
+Are there any events or festivals happening while I’m there?
+```
+```text
+Can you book tickets for a specific event or concert I’m interested in?
+```
+```text
+Are there any cultural experiences or local tours I should check out?
+```
+```text
+Are there any free or budget-friendly activities I can do in the city?
+```
+```text
+What’s the best way to get around the city? Should I use public transportation or rely on my rental car?
+```
+```text
+What’s the weather forecast during my stay?
+```
 
 #### 🎟️ Attractions & Activities
-      Cool, so now what recommendations do you have on excursions?
-      Are they available while I'm there?
-      Interesting — I like the museums, what options are there?
-      OK, great, pick one and book it for my second day there.
-      Are there any discounts or deals available for attractions and tours?
-      Are there any events or festivals happening while I’m there?
-      Can you book tickets for a specific event or concert I’m interested in?
-      Are there any cultural experiences or local tours I should check out?
+```text
+Cool, so now what recommendations do you have on excursions?
+```
+```text
+Are they available while I'm there?
+```
+```text
+Interesting — I like the museums, what options are there?
+```
+```text
+OK, great, pick one and book it for my second day there.
+```
+```text
+Are there any discounts or deals available for attractions and tours?
+```
+```text
+Are there any events or festivals happening while I’m there?
+```
+```text
+Can you book tickets for a specific event or concert I’m interested in?
+```
+```text
+Are there any cultural experiences or local tours I should check out?
+```
 
 #### 🧭 Local Info & Tips
-      What’s the best way to get around the city? Should I use public transportation or rely on my rental car?
-      Do you have any recommendations for a good restaurant near the hotel?
-      Are there any free or budget-friendly activities I can do in the city?
-      What’s the weather forecast during my stay?
-      Can you help me with local SIM card or internet access while I’m there?
-      Can you help me find a spa or wellness center in the area?
-
+```text
+What’s the best way to get around the city? Should I use public transportation or rely on my rental car?
+```
+```text
+Do you have any recommendations for a good restaurant near the hotel?
+```
+```text
+Are there any free or budget-friendly activities I can do in the city?
+```
+```text
+What’s the weather forecast during my stay?
+```
+```text
+Can you help me with local SIM card or internet access while I’m there?
+```
+```text
+Can you help me find a spa or wellness center in the area?
+```
   
 ### Agent Architecture Diagrams
 
