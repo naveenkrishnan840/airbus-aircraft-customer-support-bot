@@ -1,4 +1,5 @@
 from langgraph.graph import StateGraph, START, END
+from langchain_core.messages import ToolMessage
 from langchain_community.tools.tavily_search import TavilySearchResults
 from typing import Callable
 
