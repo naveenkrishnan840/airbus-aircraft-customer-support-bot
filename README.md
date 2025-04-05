@@ -124,7 +124,67 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
   3. TavilySearch
        - TavilySearch seems to be a search service or tool that could be involved in searching for various travel-related offerings (flights, hotels,
           car rentals, excursions). This could be part of an API or platform providing a seamless search experience for users.
-     
+
+### Travel Assistant Query List
+
+#### ✈️ Flights
+    - Hi there, what time is my flight?
+    - Am I allowed to update my flight to something sooner? I want to leave later today.
+    - Update my flight to sometime next week then.
+    - The next available option is great.
+    - Can you provide me with the details of my flight, including the flight number and departure time?
+    - Are there any earlier flights available today?
+    - Can I change my return flight to a later date next week?
+    - Can I upgrade my flight or hotel to first-class or a suite?
+    - How can I make sure I don’t miss my flight?
+
+#### 🏨 Lodging
+    - What about lodging and transportation?
+    - Yeah, I think I'd like an affordable hotel for my week-long stay (7 days). And I'll want to rent a car.
+    - OK, could you place a reservation for your recommended hotel? It sounds nice.
+    - Yes, go ahead and book anything that's moderate expense and has availability.
+    - What hotels are available in the area? Can you send me a list?
+    - How far is the hotel from the airport? Is transportation provided?
+    - What time do I need to check out of the hotel on my last day?
+
+#### 🚗 Car Rental
+    - Now for a car, what are my options?
+    - Awesome, let's just get the cheapest option. Go ahead and book for 7 days.
+    - Can you suggest a rental car that’s fuel-efficient and affordable?
+    - Can you confirm the car rental reservation for me once it’s done?
+
+#### 🗺️ Excursion Assistant Queries
+    - Cool, so now what recommendations do you have on excursions?
+    - Are they available while I'm there?
+    - Interesting — I like the museums, what options are there?
+    - OK, great, pick one and book it for my second day there.
+    - Are there any discounts or deals available for attractions and tours?
+    - Are there any events or festivals happening while I’m there?
+    - Can you book tickets for a specific event or concert I’m interested in?
+    - Are there any cultural experiences or local tours I should check out?
+    - Are there any free or budget-friendly activities I can do in the city?
+    - What’s the best way to get around the city? Should I use public transportation or rely on my rental car?
+    - What’s the weather forecast during my stay?
+
+#### 🎟️ Attractions & Activities
+    - Cool, so now what recommendations do you have on excursions?
+    - Are they available while I'm there?
+    - Interesting — I like the museums, what options are there?
+    - OK, great, pick one and book it for my second day there.
+    - Are there any discounts or deals available for attractions and tours?
+    - Are there any events or festivals happening while I’m there?
+    - Can you book tickets for a specific event or concert I’m interested in?
+    - Are there any cultural experiences or local tours I should check out?
+
+#### 🧭 Local Info & Tips
+    - What’s the best way to get around the city? Should I use public transportation or rely on my rental car?
+    - Do you have any recommendations for a good restaurant near the hotel?
+    - Are there any free or budget-friendly activities I can do in the city?
+    - What’s the weather forecast during my stay?
+    - Can you help me with local SIM card or internet access while I’m there?
+    - Can you help me find a spa or wellness center in the area?
+
+  
 ### Agent Architecture Diagrams
 
 #### Deep multi Agent Work Flow
