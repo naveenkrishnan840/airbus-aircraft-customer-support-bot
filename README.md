@@ -124,7 +124,154 @@ Efficiency meets innovation. With the power of intelligent technology, you can n
   3. TavilySearch
        - TavilySearch seems to be a search service or tool that could be involved in searching for various travel-related offerings (flights, hotels,
           car rentals, excursions). This could be part of an API or platform providing a seamless search experience for users.
-     
+
+### Travel Assistant Query List
+
+#### ✈️ Flights
+```text
+Hi there, what time is my flight?
+```
+```text
+Am I allowed to update my flight to something sooner? I want to leave later today.
+```
+```text
+Update my flight to sometime next week then.
+```
+```text
+The next available option is great.
+```
+```text
+Can you provide me with the details of my flight, including the flight number and departure time?
+```
+```text
+Are there any earlier flights available today?
+```
+```text
+Can I change my return flight to a later date next week?
+```
+```text
+Can I upgrade my flight or hotel to first-class or a suite?
+```
+```text
+How can I make sure I don’t miss my flight?
+```
+
+#### 🏨 Lodging
+```text
+What about lodging and transportation?
+```
+```text
+Yeah, I think I'd like an affordable hotel for my week-long stay (7 days). And I'll want to rent a car.
+```
+```text
+OK, could you place a reservation for your recommended hotel? It sounds nice.
+```
+```text
+Yes, go ahead and book anything that's moderate expense and has availability.
+```
+```text
+What hotels are available in the area? Can you send me a list?
+```
+```text
+How far is the hotel from the airport? Is transportation provided?
+```
+```text
+What time do I need to check out of the hotel on my last day?
+```
+#### 🚗 Car Rental
+```text
+Now for a car, what are my options?
+```
+```text
+Awesome, let's just get the cheapest option. Go ahead and book for 7 days.
+```
+```text
+Can you suggest a rental car that’s fuel-efficient and affordable?
+```
+```text
+Can you confirm the car rental reservation for me once it’s done?
+```
+#### 🗺️ Excursion Assistant Queries
+```text
+Cool, so now what recommendations do you have on excursions?
+```
+```text
+Are they available while I'm there?
+```
+```text
+Interesting — I like the museums, what options are there?
+```
+```text
+OK, great, pick one and book it for my second day there.
+```
+```text
+Are there any discounts or deals available for attractions and tours?
+```
+```text
+Are there any events or festivals happening while I’m there?
+```
+```text
+Can you book tickets for a specific event or concert I’m interested in?
+```
+```text
+Are there any cultural experiences or local tours I should check out?
+```
+```text
+Are there any free or budget-friendly activities I can do in the city?
+```
+```text
+What’s the best way to get around the city? Should I use public transportation or rely on my rental car?
+```
+```text
+What’s the weather forecast during my stay?
+```
+
+#### 🎟️ Attractions & Activities
+```text
+Cool, so now what recommendations do you have on excursions?
+```
+```text
+Are they available while I'm there?
+```
+```text
+Interesting — I like the museums, what options are there?
+```
+```text
+OK, great, pick one and book it for my second day there.
+```
+```text
+Are there any discounts or deals available for attractions and tours?
+```
+```text
+Are there any events or festivals happening while I’m there?
+```
+```text
+Can you book tickets for a specific event or concert I’m interested in?
+```
+```text
+Are there any cultural experiences or local tours I should check out?
+```
+
+#### 🧭 Local Info & Tips
+```text
+What’s the best way to get around the city? Should I use public transportation or rely on my rental car?
+```
+```text
+Do you have any recommendations for a good restaurant near the hotel?
+```
+```text
+Are there any free or budget-friendly activities I can do in the city?
+```
+```text
+What’s the weather forecast during my stay?
+```
+```text
+Can you help me with local SIM card or internet access while I’m there?
+```
+```text
+Can you help me find a spa or wellness center in the area?
+```
+  
 ### Agent Architecture Diagrams
 
 #### Deep multi Agent Work Flow
