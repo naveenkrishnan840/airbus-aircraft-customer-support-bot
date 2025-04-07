@@ -308,7 +308,7 @@ The system is built on a modern tech stack with three distinct agent types, each
 
 ## Project Structure 
 ```
-ai-hedge-fund/
+airbus-aircraft-customer-support-bot/
 ├── src/
 │   ├── assistant/                           # Agent definitions and workflow
 │   │   ├── __init__.py                      # init file
