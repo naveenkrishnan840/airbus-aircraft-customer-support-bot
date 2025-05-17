@@ -74,7 +74,7 @@ const ChatBotBody = () => {
             const data = {"input_msg": "", "passengerId": passengerId, "interrupt_status": "yes"}
             try {
                 setIsLoading(true);
-                const response = await fetch('http://65.1.139.145:8080//bot-message-request', {
+                const response = await fetch('http://3.111.243.223:8080//bot-message-request', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -190,7 +190,7 @@ const ChatBotBody = () => {
         const data = {"input_msg": inputMessage["inputmessage"], "passengerId": passengerId};
         try {
             setIsLoading(true)
-            const response = await fetch('http://65.1.139.145:8080/bot-message-request', {
+            const response = await fetch('http://3.111.243.223:8080/bot-message-request', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
