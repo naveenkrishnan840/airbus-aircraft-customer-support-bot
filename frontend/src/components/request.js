@@ -7,7 +7,7 @@ export const RequestService = async (path, data) => {
         header_data["Authorization"] = `Bearer ${localStorage.getItem("token")}`
     }
     var body = JSON.stringify(data) 
-    var path = `http://65.1.139.145:8080${path}`
+    var path = `http://3.111.243.223:8080${path}`
     return await fetch(path, {
         method: "POST",
         headers: header_data,
